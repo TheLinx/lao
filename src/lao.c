@@ -43,11 +43,27 @@ static int l_default_driver_id(lua_State* L)
   return 1;
 }
 
+static int l_new_device(lua_State* L)
+{
+  size_t nbytes;
+  luaobject *obj;
+  ao_device device;
+
+  nbytes = sizeof(luaobject);
+  obj = (luaobject *)lua_newuserdata(L, nbytes);
+
+  obj->pointer = *device;
+  obj->type = DEVICE;
+
+  return 1;
+}
+
 static const luaL_Reg ao [] = {
   {"test", l_test},
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
   {"defaultDriverId", l_default_driver_id},
+  {"newDevice" , l_new_device},
   {NULL, NULL}
 };
 
