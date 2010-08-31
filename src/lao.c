@@ -24,8 +24,21 @@ static int l_test(lua_State* L)
   return 0;
 }
 
+static int l_initialize(lua_State* L)
+{
+  ao_initialize();
+  return 0;
+}
+static int l_shutdown(lua_State* L)
+{
+  ao_shutdown();
+  return 0;
+}
+
 static const luaL_Reg lao [] = {
   {"test", l_test},
+  {"initialize", l_initialize},
+  {"shutdown", l_shutdown},
   {NULL, NULL}
 };
 

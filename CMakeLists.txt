@@ -8,3 +8,4 @@ find_package(LibAo REQUIRED)
 include_directories(${LUA_INCLUDE_DIR} ${LIBAO_INCLUDE_DIRS})
 
 add_library(lao SHARED src/lao.c)
+target_link_libraries(lao ${LIBAO_LIBRARIES})
