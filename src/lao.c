@@ -7,9 +7,15 @@
 
 struct luaobject {
     enum {
-        DEVICE
+        UNKNOWN = 0,
+        DEVICE,
+        INFO,
+        OPTION,
+        SAMPLE_FORMAT,
     } type;
-    void *p;
+    union {
+      void *pointer;
+    } data;
 };
 
 static int l_test(lua_State* L)
