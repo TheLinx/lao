@@ -1,11 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
 #include "ao/ao.h"
 
-struct luaobject {
+typedef struct luaobject {
     enum {
         UNKNOWN = 0,
         DEVICE,
@@ -16,7 +17,7 @@ struct luaobject {
     union {
       void *pointer;
     } data;
-};
+} luaobject; //use a typedef so we don't need the struct keyword
 
 static int l_test(lua_State* L)
 {
@@ -47,12 +48,14 @@ static int l_new_device(lua_State* L)
 {
   size_t nbytes;
   luaobject *obj;
-  ao_device device;
+  ao_device *device = (ao_device*) malloc(sizeof(ao_device)); //we need to free this on gc
 
   nbytes = sizeof(luaobject);
   obj = (luaobject *)lua_newuserdata(L, nbytes);
 
-  obj->pointer = *device;
+  memset(obj, 0, nbytes); //clear it before using
+
+  obj->data.pointer = (void*) device;
   obj->type = DEVICE;
 
   return 1;
