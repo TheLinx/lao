@@ -35,15 +35,24 @@ static int l_shutdown(lua_State* L)
   return 0;
 }
 
-static const luaL_Reg lao [] = {
+static int l_default_driver_id(lua_State* L)
+{
+  int default_driver;
+  default_driver = ao_default_driver_id();
+  lua_pushinteger(L, default_driver);
+  return 1;
+}
+
+static const luaL_Reg ao [] = {
   {"test", l_test},
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
+  {"defaultDriverId", l_default_driver_id},
   {NULL, NULL}
 };
 
-int luaopen_lao(lua_State* L)
+int luaopen_ao(lua_State* L)
 {
-  luaL_register(L, "lao", lao);
+  luaL_register(L, "ao", ao);
   return 1;
 }

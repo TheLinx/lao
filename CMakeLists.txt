@@ -7,5 +7,5 @@ find_package(Lua51 REQUIRED)
 find_package(LibAo REQUIRED)
 include_directories(${LUA_INCLUDE_DIR} ${LIBAO_INCLUDE_DIRS})
 
-add_library(lao SHARED src/lao.c)
-target_link_libraries(lao ${LIBAO_LIBRARIES})
+add_library(ao SHARED src/lao.c)
+target_link_libraries(ao ${LIBAO_LIBRARIES})
