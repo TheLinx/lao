@@ -10,7 +10,7 @@ struct luaobject {
         DEVICE
     } type;
     void *p;
-}
+};
 
 static int l_test(lua_State* L)
 {
