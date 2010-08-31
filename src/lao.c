@@ -5,6 +5,13 @@
 #include "lauxlib.h"
 #include "ao/ao.h"
 
+struct luaobject {
+    enum {
+        DEVICE
+    } type;
+    void *p;
+}
+
 static int l_test(lua_State* L)
 {
   puts(luaL_checkstring(L, 1));
