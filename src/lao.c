@@ -101,11 +101,11 @@ static int l_sample_format__newindex(lua_State* L)
   else if (!strcmp(key, "byte_format"))
   {
     const char *newVal = luaL_checkstring(L, 3);
-    if (!strcmp(key, "little"))
+    if (!strcmp(newVal, "little"))
       fmt->byte_format = AO_FMT_LITTLE;
-    else if (!strcmp(key, "big"))
+    else if (!strcmp(newVal, "big"))
       fmt->byte_format = AO_FMT_BIG;
-    else if (!strcmp(key, "native"))
+    else if (!strcmp(newVal, "native"))
       fmt->byte_format = AO_FMT_NATIVE;
     else
       luaL_error(L, "not a valid byte format");
