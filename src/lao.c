@@ -30,18 +30,49 @@ static int l___gc(lua_State *L)
   break;
   }
 }
-static int l___index(lua_State* L)
+
+static int l_sample_format__index(lua_State* L)
 {
   luaobject *o = (luaobject *) lua_touserdata(L, 1);
   const char *key = lua_tostring(L, 2);
+  ao_sample_format *fmt = (ao_sample_format *)o->data.pointer;
+  if (!strcmp(key, "bits"))
+    lua_pushnumber(L, (double)fmt->bits);
+  else if (!strcmp(key, "rate"))
+    lua_pushnumber(L, (double)fmt->rate);
+  else if (!strcmp(key, "channels"))
+    lua_pushnumber(L, (double)fmt->channels);
+  else if (!strcmp(key, "byte_format"))
+  {
+    switch(fmt->byte_format)
+    {
+    case 0:
+      lua_pushstring(L, "");
+      break;
+    case AO_FMT_LITTLE:
+      lua_pushstring(L, "little");
+      break;
+    case AO_FMT_BIG:
+      lua_pushstring(L, "big");
+      break;
+    case AO_FMT_NATIVE:
+      lua_pushstring(L, "native");
+      break;
+    }
+  }
+  //else if (!strcmp(key, "matrix"))
+  //  lua_pushstring(L, fmt->matrix);
+  else
+    lua_pushnil(L);
+  return 1;
+}
+static int l___index(lua_State* L)
+{
+  luaobject *o = (luaobject *) lua_touserdata(L, 1);
   switch(o->type)
   {
     case SAMPLE_FORMAT:
-      if (!strcmp(key, "bits"))
-      {
-        lua_pushnumber(L, 5);
-	return 1;
-      }
+      return l_sample_format__index(L);
     break;
   }
   return 0;
