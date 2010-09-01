@@ -26,10 +26,24 @@ static int l___gc(lua_State *L)
   {
   case DEVICE:
     //close the device
-    //ao_close((ao_device *)o->data.pointer);
     free(o->data.pointer);
+  break;
+  }
+}
+static int l___index(lua_State* L)
+{
+  luaobject *o = (luaobject *) lua_touserdata(L, 1);
+  const char *key = lua_tostring(L, 2);
+  switch(o->type)
+  {
+    case SAMPLE_FORMAT:
+      if (key == "bits")
+      {
+        lua_pushnumber(L, 5);
+      }
     break;
   }
+  return 1;
 }
 
 static int l_initialize(lua_State* L)
@@ -93,7 +107,8 @@ static const luaL_Reg ao [] = {
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
   {"defaultDriverId", l_default_driver_id},
-  {"newDevice" , l_new_device},
+  {"device" , l_new_device},
+  {"sampleFormat" , l_new_sample_format},
   {NULL, NULL}
 };
 
@@ -102,7 +117,9 @@ int luaopen_ao(lua_State* L)
   luaL_newmetatable(L, "ao.object");
   lua_pushstring(L, "__gc");
   lua_pushcfunction(L, l___gc);
-  lua_settable(L, -3);
+  lua_pushstring(L, "__index");
+  lua_pushcfunction(L, l___index);
+  lua_settable(L, -5);
   luaL_register(L, "ao", ao);
   return 1;
 }
