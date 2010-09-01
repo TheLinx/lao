@@ -27,13 +27,13 @@ static int l___gc(lua_State *L)
   case DEVICE:
     //close the device
     free(o->data.pointer);
-  break;
+    break;
   }
 }
 
 static int l_sample_format__index(lua_State* L)
 {
-  luaobject *o = (luaobject *) lua_touserdata(L, 1);
+  luaobject *o = (luaobject*) lua_touserdata(L, 1);
   const char *key = lua_tostring(L, 2);
   ao_sample_format *fmt = (ao_sample_format *)o->data.pointer;
   if (!strcmp(key, "bits"))
@@ -71,11 +71,60 @@ static int l___index(lua_State* L)
   luaobject *o = (luaobject *) lua_touserdata(L, 1);
   switch(o->type)
   {
-    case SAMPLE_FORMAT:
-      return l_sample_format__index(L);
+  case SAMPLE_FORMAT:
+    return l_sample_format__index(L);
     break;
   }
   return 0;
+}
+
+static int l_sample_format__newindex(lua_State* L)
+{
+  luaobject *o = (luaobject*) lua_touserdata(L, 1);
+  const char *key = lua_tostring(L, 2);
+  ao_sample_format *fmt = (ao_sample_format *)o->data.pointer;
+  if (!strcmp(key, "bits"))
+  {
+    int newVal = luaL_checkint(L, 3);
+    fmt->bits = newVal;
+  }
+  else if (!strcmp(key, "rate"))
+  {
+    int newVal = luaL_checkint(L, 3);
+    fmt->rate = newVal;
+  }
+  else if (!strcmp(key, "channels"))
+  {
+    int newVal = luaL_checkint(L, 3);
+    fmt->channels = newVal;
+  }
+  else if (!strcmp(key, "byte_format"))
+  {
+    const char *newVal = luaL_checkstring(L, 3);
+    if (!strcmp(key, "little"))
+      fmt->byte_format = AO_FMT_LITTLE;
+    else if (!strcmp(key, "big"))
+      fmt->byte_format = AO_FMT_BIG;
+    else if (!strcmp(key, "native"))
+      fmt->byte_format = AO_FMT_NATIVE;
+    else
+      luaL_error(L, "not a valid byte format");
+  }
+  //else if (!strcmp(key, "matrix"))
+  //  lua_pushstring(L, fmt->matrix);
+  else
+    luaL_error(L, "not a valid member");
+  return 0;
+}
+static int l___newindex(lua_State* L)
+{
+  luaobject *o = (luaobject *) lua_touserdata(L, 1);
+  switch(o->type)
+  {
+  case SAMPLE_FORMAT:
+    return l_sample_format__newindex(L);
+    break;
+  }
 }
 
 static int l_initialize(lua_State* L)
@@ -151,7 +200,9 @@ int luaopen_ao(lua_State* L)
   lua_pushcfunction(L, l___gc);
   lua_pushstring(L, "__index");
   lua_pushcfunction(L, l___index);
-  lua_settable(L, -5);
+  lua_pushstring(L, "__newindex");
+  lua_pushcfunction(L, l___newindex);
+  lua_settable(L, -7);
   luaL_register(L, "ao", ao);
   return 1;
 }
