@@ -69,6 +69,25 @@ static int l_new_device(lua_State* L)
   return 1;
 }
 
+static int l_new_sample_format(lua_State* L)
+{
+  size_t nbytes;
+  luaobject *obj;
+  ao_sample_format *fmt = (ao_sample_format *) malloc(sizeof(ao_sample_format));
+
+  nbytes = sizeof(luaobject);
+  obj = (luaobject *)lua_newuserdata(L, nbytes);
+  luaL_getmetatable(L, "ao.object");
+  lua_setmetatable(L, -2);
+
+  memset(obj, 0, nbytes);
+
+  obj->data.pointer = (void*) fmt;
+  obj->type = SAMPLE_FORMAT;
+
+  return 1;
+}
+
 static const luaL_Reg ao [] = {
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
