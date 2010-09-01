@@ -198,11 +198,13 @@ int luaopen_ao(lua_State* L)
   luaL_newmetatable(L, "ao.object");
   lua_pushstring(L, "__gc");
   lua_pushcfunction(L, l___gc);
+  lua_settable(L, -3);
   lua_pushstring(L, "__index");
   lua_pushcfunction(L, l___index);
+  lua_settable(L, -3);
   lua_pushstring(L, "__newindex");
   lua_pushcfunction(L, l___newindex);
-  lua_settable(L, -7);
+  lua_settable(L, -3);
   luaL_register(L, "ao", ao);
   return 1;
 }
