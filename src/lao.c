@@ -37,13 +37,14 @@ static int l___index(lua_State* L)
   switch(o->type)
   {
     case SAMPLE_FORMAT:
-      if (key == "bits")
+      if (!strcmp(key, "bits"))
       {
         lua_pushnumber(L, 5);
+	return 1;
       }
     break;
   }
-  return 1;
+  return 0;
 }
 
 static int l_initialize(lua_State* L)
