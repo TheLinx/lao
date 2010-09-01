@@ -19,10 +19,15 @@ typedef struct luaobject {
     } data;
 } luaobject; //use a typedef so we don't need the struct keyword
 
-static int l_test(lua_State* L)
+static int l___gc(lua_State *L)
 {
-  puts(luaL_checkstring(L, 1));
-  return 0;
+  luaobject *o = (luaobject*) lua_touserdata(L, 1);
+  switch(o->type)
+  {
+  case DEVICE:
+    //close the device
+    break;
+  }
 }
 
 static int l_initialize(lua_State* L)
@@ -52,6 +57,8 @@ static int l_new_device(lua_State* L)
 
   nbytes = sizeof(luaobject);
   obj = (luaobject *)lua_newuserdata(L, nbytes);
+  luaL_getmetatable(L, "ao.object");
+  lua_setmetatable(L, -2);
 
   memset(obj, 0, nbytes); //clear it before using
 
@@ -62,7 +69,6 @@ static int l_new_device(lua_State* L)
 }
 
 static const luaL_Reg ao [] = {
-  {"test", l_test},
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
   {"defaultDriverId", l_default_driver_id},
@@ -72,6 +78,10 @@ static const luaL_Reg ao [] = {
 
 int luaopen_ao(lua_State* L)
 {
+  luaL_newmetatable(L, "ao.object");
+  lua_pushstring(L, "__gc");
+  lua_pushcfunction(L, l___gc);
+  lua_settable(L, -3);
   luaL_register(L, "ao", ao);
   return 1;
 }
