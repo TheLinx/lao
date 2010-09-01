@@ -26,6 +26,7 @@ static int l___gc(lua_State *L)
   {
   case DEVICE:
     //close the device
+    ao_close((ao_device *)o->data.pointer);
     break;
   }
 }
