@@ -6,21 +6,9 @@
 #include "lauxlib.h"
 #include "ao/ao.h"
 
-typedef struct {
-    enum {
-        UNKNOWN = 0,
-        O_LIVE,
-        O_FILE
-    } type;
-    union {
-      void *pointer;
-    } data;
-} device; //use a typedef so we don't need the struct keyword
-
 static int l___gc(lua_State *L)
 {
-  device *dev = (device*) lua_touserdata(L, 1);
-  free(dev->data.pointer);
+  // this needs fixing
 }
 
 static int l_initialize(lua_State* L)
@@ -43,21 +31,29 @@ static int l_default_driver_id(lua_State* L)
 
 static int l_open_live(lua_State* L)
 {
+  int driver_id = luaL_checkint(L, 1);
+  // format table checking goes here?
+  // I can not into options
   size_t nbytes;
-  device *dev;
-  ao_device *devi = (ao_device*) malloc(sizeof(ao_device)); //we need to free this on gc
+  ao_device *dev = (ao_device*) malloc(sizeof(ao_device)); //we need to free this on gc
 
-  nbytes = sizeof(device);
-  dev = (device *)lua_newuserdata(L, nbytes);
+  nbytes = sizeof(ao_device);
+  dev = (ao_device *)lua_newuserdata(L, nbytes);
   luaL_getmetatable(L, "ao.device");
   lua_setmetatable(L, -2);
 
   memset(dev, 0, nbytes); //clear it before using
 
-  dev->data.pointer = (void*) devi;
-  dev->type = O_LIVE;
+  // open it
 
   return 1;
+}
+
+static int l_close_device(lua_State* L)
+{
+  ao_device *dev = (ao_device *) lua_touserdata(L, 1);
+  ao_close(dev);
+  return 0;
 }
 
 static const luaL_Reg ao [] = {
@@ -71,8 +67,13 @@ static const luaL_Reg ao [] = {
 int luaopen_ao(lua_State* L)
 {
   luaL_newmetatable(L, "ao.device");
+  lua_pushvalue(L, -1);
+  lua_setfield(L, -2, "__index");
   lua_pushstring(L, "__gc");
   lua_pushcfunction(L, l___gc);
+  lua_settable(L, -3);
+  lua_pushstring(L, "close");
+  lua_pushcfunction(L, l_close_device);
   lua_settable(L, -3);
   luaL_register(L, "ao", ao);
   return 1;
