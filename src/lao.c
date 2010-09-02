@@ -6,125 +6,21 @@
 #include "lauxlib.h"
 #include "ao/ao.h"
 
-typedef struct luaobject {
+typedef struct {
     enum {
         UNKNOWN = 0,
-        DEVICE,
-        INFO,
-        OPTION,
-        SAMPLE_FORMAT,
+        O_LIVE,
+        O_FILE
     } type;
     union {
       void *pointer;
     } data;
-} luaobject; //use a typedef so we don't need the struct keyword
+} device; //use a typedef so we don't need the struct keyword
 
 static int l___gc(lua_State *L)
 {
-  luaobject *o = (luaobject*) lua_touserdata(L, 1);
-  switch(o->type)
-  {
-  case DEVICE:
-    //close the device
-    free(o->data.pointer);
-    break;
-  }
-}
-
-static int l_sample_format__index(lua_State* L)
-{
-  luaobject *o = (luaobject*) lua_touserdata(L, 1);
-  const char *key = lua_tostring(L, 2);
-  ao_sample_format *fmt = (ao_sample_format *)o->data.pointer;
-  if (!strcmp(key, "bits"))
-    lua_pushnumber(L, (double)fmt->bits);
-  else if (!strcmp(key, "rate"))
-    lua_pushnumber(L, (double)fmt->rate);
-  else if (!strcmp(key, "channels"))
-    lua_pushnumber(L, (double)fmt->channels);
-  else if (!strcmp(key, "byte_format"))
-  {
-    switch(fmt->byte_format)
-    {
-    case 0:
-      lua_pushstring(L, "");
-      break;
-    case AO_FMT_LITTLE:
-      lua_pushstring(L, "little");
-      break;
-    case AO_FMT_BIG:
-      lua_pushstring(L, "big");
-      break;
-    case AO_FMT_NATIVE:
-      lua_pushstring(L, "native");
-      break;
-    }
-  }
-  //else if (!strcmp(key, "matrix"))
-  //  lua_pushstring(L, fmt->matrix);
-  else
-    lua_pushnil(L);
-  return 1;
-}
-static int l___index(lua_State* L)
-{
-  luaobject *o = (luaobject *) lua_touserdata(L, 1);
-  switch(o->type)
-  {
-  case SAMPLE_FORMAT:
-    return l_sample_format__index(L);
-    break;
-  }
-  return 0;
-}
-
-static int l_sample_format__newindex(lua_State* L)
-{
-  luaobject *o = (luaobject*) lua_touserdata(L, 1);
-  const char *key = lua_tostring(L, 2);
-  ao_sample_format *fmt = (ao_sample_format *)o->data.pointer;
-  if (!strcmp(key, "bits"))
-  {
-    int newVal = luaL_checkint(L, 3);
-    fmt->bits = newVal;
-  }
-  else if (!strcmp(key, "rate"))
-  {
-    int newVal = luaL_checkint(L, 3);
-    fmt->rate = newVal;
-  }
-  else if (!strcmp(key, "channels"))
-  {
-    int newVal = luaL_checkint(L, 3);
-    fmt->channels = newVal;
-  }
-  else if (!strcmp(key, "byte_format"))
-  {
-    const char *newVal = luaL_checkstring(L, 3);
-    if (!strcmp(newVal, "little"))
-      fmt->byte_format = AO_FMT_LITTLE;
-    else if (!strcmp(newVal, "big"))
-      fmt->byte_format = AO_FMT_BIG;
-    else if (!strcmp(newVal, "native"))
-      fmt->byte_format = AO_FMT_NATIVE;
-    else
-      luaL_error(L, "not a valid byte format");
-  }
-  //else if (!strcmp(key, "matrix"))
-  //  lua_pushstring(L, fmt->matrix);
-  else
-    luaL_error(L, "not a valid member");
-  return 0;
-}
-static int l___newindex(lua_State* L)
-{
-  luaobject *o = (luaobject *) lua_touserdata(L, 1);
-  switch(o->type)
-  {
-  case SAMPLE_FORMAT:
-    return l_sample_format__newindex(L);
-    break;
-  }
+  device *dev = (device*) lua_touserdata(L, 1);
+  free(dev->data.pointer);
 }
 
 static int l_initialize(lua_State* L)
@@ -140,46 +36,26 @@ static int l_shutdown(lua_State* L)
 
 static int l_default_driver_id(lua_State* L)
 {
-  int default_driver;
-  default_driver = ao_default_driver_id();
+  int default_driver = ao_default_driver_id();
   lua_pushinteger(L, default_driver);
   return 1;
 }
 
-static int l_new_device(lua_State* L)
+static int l_open_live(lua_State* L)
 {
   size_t nbytes;
-  luaobject *obj;
-  ao_device *device = (ao_device*) malloc(sizeof(ao_device)); //we need to free this on gc
+  device *dev;
+  ao_device *devi = (ao_device*) malloc(sizeof(ao_device)); //we need to free this on gc
 
-  nbytes = sizeof(luaobject);
-  obj = (luaobject *)lua_newuserdata(L, nbytes);
-  luaL_getmetatable(L, "ao.object");
+  nbytes = sizeof(device);
+  dev = (device *)lua_newuserdata(L, nbytes);
+  luaL_getmetatable(L, "ao.device");
   lua_setmetatable(L, -2);
 
-  memset(obj, 0, nbytes); //clear it before using
+  memset(dev, 0, nbytes); //clear it before using
 
-  obj->data.pointer = (void*) device;
-  obj->type = DEVICE;
-
-  return 1;
-}
-
-static int l_new_sample_format(lua_State* L)
-{
-  size_t nbytes;
-  luaobject *obj;
-  ao_sample_format *fmt = (ao_sample_format *) malloc(sizeof(ao_sample_format));
-
-  nbytes = sizeof(luaobject);
-  obj = (luaobject *)lua_newuserdata(L, nbytes);
-  luaL_getmetatable(L, "ao.object");
-  lua_setmetatable(L, -2);
-
-  memset(obj, 0, nbytes);
-
-  obj->data.pointer = (void*) fmt;
-  obj->type = SAMPLE_FORMAT;
+  dev->data.pointer = (void*) devi;
+  dev->type = O_LIVE;
 
   return 1;
 }
@@ -188,22 +64,15 @@ static const luaL_Reg ao [] = {
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
   {"defaultDriverId", l_default_driver_id},
-  {"device" , l_new_device},
-  {"sampleFormat" , l_new_sample_format},
+  {"openLive", l_open_live},
   {NULL, NULL}
 };
 
 int luaopen_ao(lua_State* L)
 {
-  luaL_newmetatable(L, "ao.object");
+  luaL_newmetatable(L, "ao.device");
   lua_pushstring(L, "__gc");
   lua_pushcfunction(L, l___gc);
-  lua_settable(L, -3);
-  lua_pushstring(L, "__index");
-  lua_pushcfunction(L, l___index);
-  lua_settable(L, -3);
-  lua_pushstring(L, "__newindex");
-  lua_pushcfunction(L, l___newindex);
   lua_settable(L, -3);
   luaL_register(L, "ao", ao);
   return 1;
