@@ -29,10 +29,41 @@ static int l_default_driver_id(lua_State* L)
   return 1;
 }
 
+struct ao_sample_format table2sampleformat(lua_State* L, int index)
+{
+  ao_sample_format fmt;
+  const char *byte_format;
+  lua_pushstring(L, "bits");
+  lua_gettable(L, index);
+  fmt.bits = luaL_checkint(L, -1);
+  lua_pop(L, 1);
+  lua_pushstring(L, "channels");
+  lua_gettable(L, index);
+  fmt.channels = luaL_checkint(L, -1);
+  lua_pop(L, 1);
+  lua_pushstring(L, "rate");
+  lua_gettable(L, index);
+  fmt.rate = luaL_checkint(L, -1);
+  lua_pop(L, 1);
+  lua_pushstring(L, "byte_format");
+  lua_gettable(L, index);
+  byte_format = luaL_checkstring(L, -1);
+  lua_pop(L, 1);
+  if (!strcmp(byte_format, "little"))
+    fmt.byte_format = AO_FMT_LITTLE;
+  else if (!strcmp(byte_format, "big"))
+    fmt.byte_format = AO_FMT_BIG;
+  else if (!strcmp(byte_format, "native"))
+    fmt.byte_format = AO_FMT_NATIVE;
+  else
+    luaL_error(L, "not a valid byte format");
+  return fmt;
+}
+
 static int l_open_live(lua_State* L)
 {
   int driver_id = luaL_checkint(L, 1);
-  // format table checking goes here?
+  struct ao_sample_format fmt = table2sampleformat(L, 2);
   // I can not into options
   size_t nbytes;
   ao_device *dev = (ao_device*) malloc(sizeof(ao_device)); //we need to free this on gc
@@ -44,7 +75,7 @@ static int l_open_live(lua_State* L)
 
   memset(dev, 0, nbytes); //clear it before using
 
-  // open it
+  dev = ao_open_live(driver_id, &fmt, NULL);
 
   return 1;
 }
