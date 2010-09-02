@@ -75,7 +75,8 @@ static int l_open_live(lua_State* L)
 
   memset(dev, 0, nbytes); //clear it before using
 
-  dev = ao_open_live(driver_id, &fmt, NULL);
+  ao_device *tdev = ao_open_live(driver_id, &fmt, NULL);
+  memcpy(dev, tdev, sizeof(ao_device));
 
   return 1;
 }
