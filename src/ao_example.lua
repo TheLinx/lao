@@ -4,6 +4,8 @@
 require("ao")
 require("bit")
 
+local schar = string.char
+
 BUF_SIZE = 4096
 freq = 440.0
 
@@ -32,11 +34,11 @@ buffer = {}
 for i=0,format.rate do
   sample = math.floor((0.75 * 32768 * math.sin(2 * math.pi * freq * i/format.rate)) + 0.5)
   local a = bit.band(sample, 0xff)
-  buffer[4*i] = a
-  buffer[4*i+2] = a
+  buffer[4*i] = schar(a)
+  buffer[4*i+2] = schar(a)
   local b = bit.band(bit.rshift(sample, 8), 0xff)
-  buffer[4*i+1] = b
-  buffer[4*i+3] = b
+  buffer[4*i+1] = schar(b)
+  buffer[4*i+3] = schar(b)
 end
 
 device:play(buffer, buf_size)

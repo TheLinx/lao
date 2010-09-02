@@ -80,6 +80,16 @@ static int l_open_live(lua_State* L)
   return 1;
 }
 
+static int l_play(lua_State *L)
+{
+  ao_device *dev = (ao_device *) lua_touserdata(L, 1);
+  int num_bytes = luaL_checkint(L, 3);
+  char *samples = luaL_checklstring(L, 2, (size_t *)num_bytes);
+  int result = ao_play(dev, samples, (uint_32)num_bytes);
+  lua_pushnumber(L, result);
+  return 1;
+}
+
 static int l_close_device(lua_State* L)
 {
   ao_device *dev = (ao_device *) lua_touserdata(L, 1);
@@ -105,6 +115,9 @@ int luaopen_ao(lua_State* L)
   lua_settable(L, -3);
   lua_pushstring(L, "close");
   lua_pushcfunction(L, l_close_device);
+  lua_settable(L, -3);
+  lua_pushstring(L, "play");
+  lua_pushcfunction(L, l_play);
   lua_settable(L, -3);
   luaL_register(L, "ao", ao);
   return 1;
