@@ -11,7 +11,7 @@ freq = 440.0
 
 -- Initialize
 print("lao example script")
-ao.initialize()
+--ao.initialize() this is done when requiring, but can still be used if you need to restart the environment
 
 -- Setup for default driver
 default_driver = ao.defaultDriverId()
@@ -41,8 +41,6 @@ for i=0,format.rate do
   buffer[4*i+4] = schar(b)
 end
 
-device:play(table.concat(buffer), buf_size)
+device:play(table.concat(buffer), buf_size, {})
 
--- Close and shutdown
-device:close()
-ao.shutdown()
+-- Close and shutdown is handled by the garbage collector!
