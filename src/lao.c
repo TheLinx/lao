@@ -66,26 +66,25 @@ static int l_open_live(lua_State* L)
   struct ao_sample_format fmt = table2sampleformat(L, 2);
   // I can not into options
   size_t nbytes;
-  ao_device *dev = (ao_device*) malloc(sizeof(ao_device)); //we need to free this on gc
 
-  nbytes = sizeof(ao_device);
-  dev = (ao_device *)lua_newuserdata(L, nbytes);
+  nbytes = sizeof(ao_device*);
+  ao_device **dev = (ao_device **)lua_newuserdata(L, nbytes);
   luaL_getmetatable(L, "ao.device");
   lua_setmetatable(L, -2);
 
   memset(dev, 0, nbytes); //clear it before using
 
   ao_device *tdev = ao_open_live(driver_id, &fmt, NULL);
-  memcpy(dev, tdev, sizeof(ao_device));
+  *dev = tdev;
 
   return 1;
 }
 
 static int l_play(lua_State *L)
 {
-  ao_device *dev = (ao_device *) lua_touserdata(L, 1);
+  ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
   int num_bytes = luaL_checkint(L, 3);
-  char *samples = luaL_checklstring(L, 2, (size_t *)num_bytes);
+  char *samples = luaL_checklstring(L, 2, (size_t *) &num_bytes);
   int result = ao_play(dev, samples, (uint_32)num_bytes);
   lua_pushnumber(L, result);
   return 1;
@@ -93,7 +92,7 @@ static int l_play(lua_State *L)
 
 static int l_close_device(lua_State* L)
 {
-  ao_device *dev = (ao_device *) lua_touserdata(L, 1);
+  ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
   ao_close(dev);
   return 0;
 }

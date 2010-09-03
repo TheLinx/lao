@@ -41,7 +41,7 @@ for i=0,format.rate do
   buffer[4*i+3] = schar(b)
 end
 
-device:play(buffer, buf_size)
+device:play(table.concat(buffer), buf_size)
 
 -- Close and shutdown
 device:close()
