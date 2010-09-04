@@ -11,7 +11,8 @@ freq = 440.0
 
 -- Initialize
 print("lao example script")
---ao.initialize() this is done when requiring, but can still be used if you need to restart the environment
+--ao.initialize()
+--this is done when requiring, but can still be used if you need to restart the environment
 
 -- Setup for default driver
 default_driver = ao.defaultDriverId()

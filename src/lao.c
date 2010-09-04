@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
-#include "ao/ao.h"
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+#include <ao/ao.h>
 
 static int l_initialize(lua_State* L)
 {
@@ -63,8 +63,8 @@ struct ao_sample_format table2sampleformat(lua_State* L, int index)
 }
 struct ao_option table2option(lua_State* L, int index)
 {
-  ao_option opt;
-  if (!lua_isnil(L, index))
+  struct ao_option opt;
+  if (!lua_isnoneornil(L, index))
   {
     lua_pushnil(L);
     while (lua_next(L, index) != 0)
