@@ -217,6 +217,13 @@ static int l_file_extension(lua_State *L)
   return 1;
 }
 
+/* -- Miscellaneous -- */
+static int l_is_big_endian(lua_State *L)
+{
+  lua_pushboolean(L, ao_is_big_endian());
+  return 1;
+}
+
 /* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
   {"initialize", l_initialize},
@@ -226,7 +233,8 @@ static const luaL_Reg ao [] = {
   {"defaultDriverId", l_default_driver_id},
   {"driverInfo", l_driver_info},
   {"driverInfoList", l_driver_info_list},
-  {"fileExtension", l_file_extension},
+  //{"fileExtension", l_file_extension},
+  {"isBigEndian", l_is_big_endian},
   {"__gc", l___gc},
   {NULL, NULL}
 };
