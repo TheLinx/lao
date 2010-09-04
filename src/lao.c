@@ -195,6 +195,20 @@ static int l_driver_info(lua_State *L)
     return 1;
   }
 }
+static int l_driver_info_list(lua_State *L)
+{
+  int count, i, driverid;
+  ao_info **infa = ao_driver_info_list(&count);
+  lua_newtable(L);
+  for (i = 0; i < count; i++)
+  {
+    driverid = ao_driver_id(infa[i]->short_name);
+    lua_pushinteger(L, driverid);
+    info2luaTable(L, infa[i]);
+    lua_settable(L, -3);
+  }
+  return 1;
+}
 
 /* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
@@ -203,6 +217,7 @@ static const luaL_Reg ao [] = {
   {"driverId", l_driver_id},
   {"defaultDriverId", l_default_driver_id},
   {"driverInfo", l_driver_info},
+  {"driverInfoList", l_driver_info_list},
   {"openLive", l_open_live},
   {"__gc", l___gc},
   {NULL, NULL}
