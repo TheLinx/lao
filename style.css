@@ -1,0 +1,60 @@
+* {
+  font-family: helvetica, sans-serif;
+}
+
+body {
+  color: #000;
+  background-color: #FFF;
+  margin: 0 10px;
+  font-size: 12pt;
+}
+
+a {
+  color: #55F;
+}
+
+ul.menu, ul.menu ul {
+  list-style-type: none;
+  padding: 0;
+}
+ul.menu > li {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+ul.menu > li > ul > li {
+  font-weight: normal;
+}
+
+ul.notmenu > li {
+  margin-bottom: 0.5em;
+}
+
+hr {
+  border: 0;
+  height: 2px;
+  background-color: grey;
+  margin-top: 2em;
+  margin-bottom: 0;
+}
+
+pre, tt, .tt {
+  font-size: 10pt;
+  font-family: monospace;
+}
+
+.tiny {
+  font-size: 8pt;
+}
+.r {
+  color: red;
+}
+
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.cb {
+  clear: both;
+}

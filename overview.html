@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>lao - api overview</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+  <span class="tiny">
+    <p class="fl">lao documentation</p>
+    <p class="fr">lao version 1.0.0 - 20100904</p>
+  </span>
+  <h1 class="cb">api overview</h1>
+  <p>lao is designed to stick to libao principles, but also makes sure
+  you're still programming Lua. The API is very similar to libao's, but
+  it has been simplified so you wont have to deal with creating a special
+  type of userdata for sample formats, options, et.c.</p>
+  <p>To use lao, follow these steps:</p>
+  <ul class="notmenu">
+    <li>
+      Include lao in your program by calling <tt>require("ao")</tt>.
+    </li>
+    <li>
+      Unlike libao, <a class="tt" href="ao_initialize.html">ao.initalize</a>
+      is called when lao is <tt>require</tt>d. However, you can still call
+      it to restart the libao environment after you've called
+      <a class="tt" href="ao_shutdown.html">ao.shutdown</a>.
+    </li>
+    <li>
+      Call <a class="tt" href="ao_default_driver_id.html">ao.defaultDriverId</a>
+      to get the ID number of the default output driver. If you want to
+      specify a particular output driver, you may call
+      <a class="tt" href="ao_driver_id.html">ao.driverId</a> with a string
+      corresponding to the short name of the device (i.e. "oss", "wav",
+      et.c.) instead.
+    </li>
+    <li>
+      If you are using the default device, no extra options are needed.
+      However, if you wish to pass special options to the device, you will
+      need to supply an option table to the ao.Open**** function.
+    </li>
+    <li>
+      Call <a class="tt" href="ao_open_live.html">ao.openLive()</a> and
+      save the return value (!). That will be the device you use to play
+      and without it, well, you can't play stuff. If you are using a file
+      output driver, you will need to call
+      <a class="tt" href="ao_open_file.html">ao.openFile()</a> instead.
+    </li>
+    <li>
+      Call <a class="tt" href="device_play.html">device:play()</a> on
+      each block of audio.
+    </li>
+    <li>
+      The following steps are optional since it's handled by lao's __gc
+      handlers, but you may want to do this manually for different reasons.
+    </li>
+    <li>
+      Call <a class="tt" href="device_close.html">device:close()</a> to
+      close the device.
+    </li>
+    <li>
+      Call <a class="tt" href="ao_shutdown.html">ao.shutdown()</a> to
+      shutdown the libao environment.
+    </li>
+  </ul>
+  <p>
+    <span class="r">Warning:</span> currently, if you try to close a
+    device after the libao environment has been shut down, lao will segfault.
+  </p>
+  <hr />
+  <span class="tiny">
+    <p class="fl">developed by Linus Sjögren</p>
+    <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
+    <br class="cb" />
+    <p class="fl"><a href="./">back to index</a></p>
+    <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+  </span>
+</body>
+</html>
