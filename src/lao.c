@@ -43,7 +43,7 @@ struct ao_sample_format table2sampleformat(lua_State* L, int index)
   lua_gettable(L, index);
   fmt.rate = luaL_checkint(L, -1);
   lua_pop(L, 1);
-  lua_pushstring(L, "byte_format");
+  lua_pushstring(L, "byteFormat");
   lua_gettable(L, index);
   byte_format = luaL_checkstring(L, -1);
   lua_pop(L, 1);
@@ -90,6 +90,58 @@ static int l_open_live(lua_State* L)
 
   ao_device *tdev = ao_open_live(driver_id, &fmt, &opt);
   *dev = tdev;
+
+  return 1;
+}
+static int l_open_file(lua_State* L)
+{
+  int driver_id = luaL_checkint(L, 1);
+  const char *filename = luaL_checkstring(L, 2);
+  if (!lua_isboolean(L, 3))
+    luaL_error(L, "bad argument #3 to 'openFile' (boolean expected)");
+  int overwrite = lua_toboolean(L, 3);
+  struct ao_sample_format fmt = table2sampleformat(L, 4);
+  struct ao_option opt = table2option(L, 5);
+  size_t nbytes;
+
+  nbytes = sizeof(ao_device*);
+  ao_device **dev = (ao_device **)lua_newuserdata(L, nbytes);
+  luaL_getmetatable(L, "ao.device");
+  lua_setmetatable(L, -2);
+
+  memset(dev, 0, nbytes); //clear it before using
+
+  ao_device *tdev = ao_open_file(driver_id, filename, overwrite, &fmt, &opt);
+  if (!tdev)
+  {
+    char err[61] = "";
+    strcat(err, "could not open device: ");
+    switch (errno)
+    {
+    case AO_ENODRIVER:
+      strcat(err, "no such driver");
+      break;
+    case AO_ENOTFILE:
+      strcat(err, "not a file-type driver");
+      break;
+    case AO_EBADOPTION:
+      strcat(err, "a valid option key has an invalid value");
+      break;
+    case AO_EOPENFILE:
+      strcat(err, "cannot open the file");
+      break;
+    case AO_EFILEEXISTS:
+      strcat(err, "file exists, not overwriting");
+      break;
+    case AO_EFAIL:
+    default:
+      sprintf(err, "something went wrong (errno: %d)", errno);
+      break;
+    }
+    luaL_error(L, err);
+  }
+  else
+    *dev = tdev;
 
   return 1;
 }
@@ -229,6 +281,7 @@ static const luaL_Reg ao [] = {
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
   {"openLive", l_open_live},
+  {"openFile", l_open_file},
   {"driverId", l_driver_id},
   {"defaultDriverId", l_default_driver_id},
   {"driverInfo", l_driver_info},

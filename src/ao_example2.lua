@@ -15,7 +15,7 @@ print("lao example script")
 --this is done when requiring, but can still be used if you need to restart the environment
 
 -- Setup for default driver
-default_driver = ao.defaultDriverId()
+driverid = ao.driverId("wav")
 format = {
   bits = 16;
   channels = 2;
@@ -24,7 +24,7 @@ format = {
 }
 
 -- Open driver
-device = ao.openLive(default_driver, format)
+device = ao.openFile(driverid, "boop.wav", false, format)
 if not device then
   error("Error opening device.")
 end
