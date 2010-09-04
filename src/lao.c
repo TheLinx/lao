@@ -6,6 +6,7 @@
 #include <lauxlib.h>
 #include <ao/ao.h>
 
+/* -- Library Setup/Teardown -- */
 static int l_initialize(lua_State* L)
 {
   ao_initialize();
@@ -22,13 +23,8 @@ static int l___gc(lua_State* L)
   return 0;
 }
 
-static int l_default_driver_id(lua_State* L)
-{
-  int default_driver = ao_default_driver_id();
-  lua_pushinteger(L, default_driver);
-  return 1;
-}
-
+/* --  Device Setup/Playback/Teardown -- */
+// backend stuff
 struct ao_sample_format table2sampleformat(lua_State* L, int index)
 {
   if(lua_type(L, index) != LUA_TTABLE)
@@ -63,7 +59,7 @@ struct ao_sample_format table2sampleformat(lua_State* L, int index)
 }
 struct ao_option table2option(lua_State* L, int index)
 {
-  struct ao_option opt;
+  struct ao_option *opt;
   if (!lua_isnoneornil(L, index))
   {
     lua_pushnil(L);
@@ -75,9 +71,9 @@ struct ao_option table2option(lua_State* L, int index)
       lua_pop(L, 1);
     }
   }
-  return opt;
+  return *opt;
 }
-
+//actual functions
 static int l_open_live(lua_State* L)
 {
   int driver_id = luaL_checkint(L, 1);
@@ -92,12 +88,11 @@ static int l_open_live(lua_State* L)
 
   memset(dev, 0, nbytes); //clear it before using
 
-  ao_device *tdev = ao_open_live(driver_id, &fmt, NULL);
+  ao_device *tdev = ao_open_live(driver_id, &fmt, &opt);
   *dev = tdev;
 
   return 1;
 }
-
 static int l_play(lua_State *L)
 {
   ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
@@ -107,7 +102,6 @@ static int l_play(lua_State *L)
   lua_pushnumber(L, result);
   return 1;
 }
-
 static int l_close_device(lua_State* L)
 {
   ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
@@ -115,10 +109,91 @@ static int l_close_device(lua_State* L)
   return 0;
 }
 
+/* -- Driver Information -- */
+//backend stuff
+void info2luaTable(lua_State* L, ao_info* inf)
+{
+  lua_newtable(L);
+  lua_pushstring(L, "type");
+  switch (inf->type)
+  {
+  case AO_TYPE_LIVE:
+    lua_pushstring(L, "live");
+    break;
+  case AO_TYPE_FILE:
+    lua_pushstring(L, "file");
+    break;
+  }
+  lua_settable(L, -3);
+  lua_pushstring(L, "name");
+  lua_pushstring(L, inf->name);
+  lua_settable(L, -3);
+  lua_pushstring(L, "shortName");
+  lua_pushstring(L, inf->short_name);
+  lua_settable(L, -3);
+  lua_pushstring(L, "comment");
+  if (inf->comment)
+    lua_pushstring(L, inf->comment);
+  else
+    lua_pushnil(L);
+  lua_settable(L, -3);
+  lua_pushstring(L, "preferredByteFormat");
+  switch (inf->preferred_byte_format)
+  {
+  case AO_FMT_LITTLE:
+    lua_pushstring(L, "little");
+    break;
+  case AO_FMT_BIG:
+    lua_pushstring(L, "big");
+    break;
+  case AO_FMT_NATIVE:
+    lua_pushstring(L, "native");
+    break;
+  }
+  lua_settable(L, -3);
+  lua_pushstring(L, "priority");
+  lua_pushinteger(L, inf->priority);
+  lua_settable(L, -3);
+  // how does I iterate char**?
+}
+//actual functions
+static int l_driver_id(lua_State* L)
+{
+  const char *driver = luaL_checkstring(L, 1);
+  int driverId = ao_driver_id((char *)driver);
+  lua_pushinteger(L, driverId);
+  return 1;
+}
+static int l_default_driver_id(lua_State* L)
+{
+  int default_driver = ao_default_driver_id();
+  lua_pushinteger(L, default_driver);
+  return 1;
+}
+static int l_driver_info(lua_State *L)
+{
+  int driver_id = luaL_checkint(L, 1);
+  ao_info *inf = ao_driver_info(driver_id);
+  if (!inf)
+  {
+    lua_pushnil(L);
+    lua_pushstring(L, "invalid device id");
+    return 2;
+  }
+  else
+  {
+    info2luaTable(L, inf);
+    return 1;
+  }
+}
+
+/* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
+  {"driverId", l_driver_id},
   {"defaultDriverId", l_default_driver_id},
+  {"driverInfo", l_driver_info},
   {"openLive", l_open_live},
   {"__gc", l___gc},
   {NULL, NULL}
