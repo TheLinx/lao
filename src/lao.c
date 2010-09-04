@@ -113,6 +113,7 @@ static int l_close_device(lua_State* L)
 //backend stuff
 void info2luaTable(lua_State* L, ao_info* inf)
 {
+  int i;
   lua_newtable(L);
   lua_pushstring(L, "type");
   switch (inf->type)
@@ -154,7 +155,15 @@ void info2luaTable(lua_State* L, ao_info* inf)
   lua_pushstring(L, "priority");
   lua_pushinteger(L, inf->priority);
   lua_settable(L, -3);
-  // how does I iterate char**?
+  lua_pushstring(L, "options");
+  lua_newtable(L);
+  for (i = 0; i < inf->option_count; i++)
+  {
+    lua_pushstring(L, inf->options[i]);
+    lua_pushboolean(L, 1); // I don't know how to make a table with only keys :/
+    lua_settable(L, -3);
+  }
+  lua_settable(L, -3);
 }
 //actual functions
 static int l_driver_id(lua_State* L)
