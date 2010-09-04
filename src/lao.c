@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-#include <ao/ao.h>
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+#include "ao/ao.h"
 
 /* -- Library Setup/Teardown -- */
 static int l_initialize(lua_State* L)
@@ -209,16 +209,24 @@ static int l_driver_info_list(lua_State *L)
   }
   return 1;
 }
+static int l_file_extension(lua_State *L)
+{
+  int driverId = luaL_checkint(L, 1);
+  char *ext = ao_file_extension(driverId);
+  lua_pushstring(L, ext);
+  return 1;
+}
 
 /* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
   {"initialize", l_initialize},
   {"shutdown", l_shutdown},
+  {"openLive", l_open_live},
   {"driverId", l_driver_id},
   {"defaultDriverId", l_default_driver_id},
   {"driverInfo", l_driver_info},
   {"driverInfoList", l_driver_info_list},
-  {"openLive", l_open_live},
+  {"fileExtension", l_file_extension},
   {"__gc", l___gc},
   {NULL, NULL}
 };
