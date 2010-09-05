@@ -89,6 +89,32 @@ static int l_open_live(lua_State* L)
   memset(dev, 0, nbytes); //clear it before using
 
   ao_device *tdev = ao_open_live(driver_id, &fmt, &opt);
+  if (!tdev)
+  {
+    char err[61] = "";
+    switch (errno)
+    {
+    case AO_ENODRIVER:
+      err "no such driver");
+      break;
+    case AO_ENOTFILE:
+      err =  "not a file-type driver");
+      break;
+    case AO_EBADOPTION:
+      err =  "a valid option key has an invalid value");
+      break;
+    case AO_EOPENFILE:
+      err =  "cannot open the device");
+      break;
+    case AO_EFAIL:
+    default:
+      sprintf(err, "something went wrong");
+      break;
+    }
+    luaL_error(L, err);
+  }
+  else
+    *dev = tdev;
   *dev = tdev;
 
   return 1;
@@ -115,27 +141,27 @@ static int l_open_file(lua_State* L)
   if (!tdev)
   {
     char err[61] = "";
-    strcat(err, "could not open device: ");
+    err =  "could not open device: ";
     switch (errno)
     {
     case AO_ENODRIVER:
-      strcat(err, "no such driver");
+      err = "no such driver";
       break;
     case AO_ENOTFILE:
-      strcat(err, "not a file-type driver");
+      err = "not a file-type driver";
       break;
     case AO_EBADOPTION:
-      strcat(err, "a valid option key has an invalid value");
+      err = "a valid option key has an invalid value";
       break;
     case AO_EOPENFILE:
-      strcat(err, "cannot open the file");
+      err = "cannot open the file";
       break;
     case AO_EFILEEXISTS:
-      strcat(err, "file exists, not overwriting");
+      err = "file exists, not overwriting";
       break;
     case AO_EFAIL:
     default:
-      sprintf(err, "something went wrong (errno: %d)", errno);
+      err = "something went wrong";
       break;
     }
     luaL_error(L, err);
