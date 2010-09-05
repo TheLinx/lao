@@ -211,8 +211,8 @@ void info2luaTable(lua_State* L, ao_info* inf)
   lua_newtable(L);
   for (i = 0; i < inf->option_count; i++)
   {
+    lua_pushinteger(L, i+1);
     lua_pushstring(L, inf->options[i]);
-    lua_pushboolean(L, 1); // I don't know how to make a table with only keys :/
     lua_settable(L, -3);
   }
   lua_settable(L, -3);
