@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>lao</title>
+<title>lao - function - ao.defaultDriverId</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
@@ -9,18 +9,22 @@
     <p class="fr">lao version 1.0.0 - 20100905</p>
     <br class="cb" />
   </span>
-  <h1 class="cb">lao - libao bindings for Lua</h1>
+  <h1 class="cb">ao.defaultDriverId</h1>
   <p>
-    lao is a Lua module that provides bindings to the audio library
-    libao, developed by xiph.org. It should work on any platform that
-    supports Lua and libao.
+    Returns the ID of the default live output driver.
   </p>
-  <ul class="menu"><li><ul>
-    <li><a href="install.html">installation instructions</a></li>
-    <li><a href="overview.html">api overview</a></li>
-    <li><a href="reference.html">api reference</a></li>
-    <li><a href="credits.html">credits</a></li>
-  </ul></li></ul>
+  <pre class="declare"><i>number</i> driverId = ao.defaultDriverId()</pre>
+  <h2>Return Values</h2>
+  <ul class="vars">
+    <li>driverId<ul>
+      <li>
+        If a usable driver was found, this will be that driver's ID number.
+      </li>
+      <li>
+        If no usable driver was found, this will be nil.
+      </li>
+    </ul></li>
+  </ul>
   <hr />
   <span class="tiny">
     <p class="fl">developed by Linus Sjögren</p>

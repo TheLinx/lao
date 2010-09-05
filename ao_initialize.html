@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>lao</title>
+<title>lao - function - ao.initialize</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
@@ -9,18 +9,17 @@
     <p class="fr">lao version 1.0.0 - 20100905</p>
     <br class="cb" />
   </span>
-  <h1 class="cb">lao - libao bindings for Lua</h1>
+  <h1 class="cb">ao.initialize</h1>
   <p>
-    lao is a Lua module that provides bindings to the audio library
-    libao, developed by xiph.org. It should work on any platform that
-    supports Lua and libao.
+    Calls libao's ao_initialize(), which starts the libao environment.
   </p>
-  <ul class="menu"><li><ul>
-    <li><a href="install.html">installation instructions</a></li>
-    <li><a href="overview.html">api overview</a></li>
-    <li><a href="reference.html">api reference</a></li>
-    <li><a href="credits.html">credits</a></li>
-  </ul></li></ul>
+  <pre class="declare">ao.initialize()</pre>
+  <h2>Notes</h2>
+  <p>
+    This function is automatically called when lao is required. You do
+    not need to call this function unless you've called
+    <a href="ao_shutdown.html">ao.shutdown</a>.
+  </p>
   <hr />
   <span class="tiny">
     <p class="fl">developed by Linus Sjögren</p>

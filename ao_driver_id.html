@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>lao - function - ao.driverId</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+  <span class="tiny">
+    <p class="fl">lao documentation</p>
+    <p class="fr">lao version 1.0.0 - 20100905</p>
+    <br class="cb" />
+  </span>
+  <h1 class="cb">ao.driverId</h1>
+  <p>
+    Looks up the ID number for a driver based upon its short name. The ID
+    number is needed to open the driver or get info on it. 
+  </p>
+  <pre class="declare"><i>number</i> driverId = ao.driverId(<i>string</i> shortName)</pre>
+  <h2>Parameters</h2>
+  <ul class="vars">
+    <li>shortName<ul>
+      <li>
+        The short name of the driver. See
+        <a href="http://xiph.org/ao/doc/drivers.html">xiph's list of
+        drivers</a>.
+      </li>
+    </ul></li>
+  </ul>
+  <h2>Return Values</h2>
+  <ul class="vars">
+    <li>driverId<ul>
+      <li>
+        If a driver was found with the specified short name, this is the
+        ID of the driver.
+      </li>
+      <li>
+        If no driver was found, this will be nil.
+      </li>
+    </ul></li>
+  </ul>
+  <hr />
+  <span class="tiny">
+    <p class="fl">developed by Linus Sjögren</p>
+    <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
+    <br class="cb" />
+    <p class="fl"><a href="./index.html">back to index</a></p>
+    <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+    <br class="cb" />
+  </span>
+</body>
+</html>

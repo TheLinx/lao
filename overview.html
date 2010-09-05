@@ -7,6 +7,7 @@
   <span class="tiny">
     <p class="fl">lao documentation</p>
     <p class="fr">lao version 1.0.0 - 20100905</p>
+    <br class="cb" />
   </span>
   <h1 class="cb">api overview</h1>
   <p>lao is designed to stick to libao principles, but also makes sure
@@ -19,16 +20,16 @@
       Include lao in your program by calling <tt>require("ao")</tt>.
     </li>
     <li>
-      Unlike libao, <a class="tt" href="ao_initialize.html">ao.initalize</a>
+      Unlike libao, <a href="ao_initialize.html">ao.initalize</a>
       is called when lao is <tt>require</tt>d. However, you can still call
       it to restart the libao environment after you've called
-      <a class="tt" href="ao_shutdown.html">ao.shutdown</a>.
+      <a href="ao_shutdown.html">ao.shutdown</a>.
     </li>
     <li>
-      Call <a class="tt" href="ao_default_driver_id.html">ao.defaultDriverId</a>
+      Call <a href="ao_default_driver_id.html">ao.defaultDriverId</a>
       to get the ID number of the default output driver. If you want to
       specify a particular output driver, you may call
-      <a class="tt" href="ao_driver_id.html">ao.driverId</a> with a string
+      <a href="ao_driver_id.html">ao.driverId</a> with a string
       corresponding to the short name of the device (i.e. "oss", "wav",
       et.c.) instead.
     </li>
@@ -38,14 +39,14 @@
       need to supply an option table to the ao.Open**** function.
     </li>
     <li>
-      Call <a class="tt" href="ao_open_live.html">ao.openLive()</a> and
+      Call <a href="ao_open_live.html">ao.openLive</a> and
       save the return value (!). That will be the device you use to play
       and without it, well, you can't play stuff. If you are using a file
       output driver, you will need to call
-      <a class="tt" href="ao_open_file.html">ao.openFile()</a> instead.
+      <a href="ao_open_file.html">ao.openFile</a> instead.
     </li>
     <li>
-      Call <a class="tt" href="device_play.html">device:play()</a> on
+      Call <a href="device_play.html">device:play</a> on
       each block of audio.
     </li>
     <li>
@@ -53,11 +54,11 @@
       handlers, but you may want to do this manually for different reasons.
     </li>
     <li>
-      Call <a class="tt" href="device_close.html">device:close()</a> to
+      Call <a href="device_close.html">device:close</a> to
       close the device.
     </li>
     <li>
-      Call <a class="tt" href="ao_shutdown.html">ao.shutdown()</a> to
+      Call <a href="ao_shutdown.html">ao.shutdown</a> to
       shutdown the libao environment.
     </li>
   </ul>
@@ -70,8 +71,9 @@
     <p class="fl">developed by Linus Sjögren</p>
     <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
     <br class="cb" />
-    <p class="fl"><a href="./">back to index</a></p>
+    <p class="fl"><a href="./index.html">back to index</a></p>
     <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+    <br class="cb" />
   </span>
 </body>
 </html>

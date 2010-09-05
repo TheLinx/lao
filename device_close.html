@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>lao</title>
+<title>lao - function - device:close</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
@@ -9,18 +9,23 @@
     <p class="fr">lao version 1.0.0 - 20100905</p>
     <br class="cb" />
   </span>
-  <h1 class="cb">lao - libao bindings for Lua</h1>
+  <h1 class="cb">device:close</h1>
   <p>
-    lao is a Lua module that provides bindings to the audio library
-    libao, developed by xiph.org. It should work on any platform that
-    supports Lua and libao.
+    Closes the audio device.
   </p>
-  <ul class="menu"><li><ul>
-    <li><a href="install.html">installation instructions</a></li>
-    <li><a href="overview.html">api overview</a></li>
-    <li><a href="reference.html">api reference</a></li>
-    <li><a href="credits.html">credits</a></li>
-  </ul></li></ul>
+  <pre class="declare"><i>boolean</i> success = device:close()</pre>
+  <h2>Return Values</h2>
+  <ul class="vars">
+    <li>success<ul>
+      <li>
+        If true, remaining data was written correctly and device closed.
+      </li>
+      <li>
+        If false, there was an error while closing the device. If this
+        device was writing to a file, the file may be corrupted.
+      </li>
+    </ul></li>
+  </ul>
   <hr />
   <span class="tiny">
     <p class="fl">developed by Linus Sjögren</p>

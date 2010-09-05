@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>lao</title>
+<title>lao - userdata - option</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
@@ -9,18 +9,21 @@
     <p class="fr">lao version 1.0.0 - 20100905</p>
     <br class="cb" />
   </span>
-  <h1 class="cb">lao - libao bindings for Lua</h1>
+  <h1 class="cb">option</h1>
   <p>
-    lao is a Lua module that provides bindings to the audio library
-    libao, developed by xiph.org. It should work on any platform that
-    supports Lua and libao.
+    Instead of this being a userdata which is restrictive and cumbersome,
+    you use a regular table with key->value pairs.
   </p>
-  <ul class="menu"><li><ul>
-    <li><a href="install.html">installation instructions</a></li>
-    <li><a href="overview.html">api overview</a></li>
-    <li><a href="reference.html">api reference</a></li>
-    <li><a href="credits.html">credits</a></li>
-  </ul></li></ul>
+  <p>
+    You can supply option tables to
+    <a href="ao_open_live.html">ao.openLive</a> and
+    <a href="ao_open_file.html">ao.openFile</a>.
+  </p>
+  <p>
+    The keys you use in the table are the options you give to the driver.
+    If you wonder what options you can use, use
+    <a href="ao_driver_info.html">ao.driverInfo</a>.
+  </p>
   <hr />
   <span class="tiny">
     <p class="fl">developed by Linus Sjögren</p>

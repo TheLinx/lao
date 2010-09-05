@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>lao - function - device:play</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+  <span class="tiny">
+    <p class="fl">lao documentation</p>
+    <p class="fr">lao version 1.0.0 - 20100905</p>
+    <br class="cb" />
+  </span>
+  <h1 class="cb">device:play</h1>
+  <p>
+    Play a block of audio data to a device.
+  </p>
+  <pre class="declare"><i>boolean</i> success = device:play(<i>string</i> buffer, <i>number</i> bufferSize)</pre>
+  <h2>Parameters</h2>
+  <ul class="vars">
+    <li>buffer<ul>
+      <li>String containing audio data.</li>
+    </ul></li>
+    <li>bufferSize<ul>
+      <li>Number of bytes of audio data in the buffer string.</li>
+    </ul></li>
+  </ul>
+  <h2>Return Values</h2>
+  <ul class="vars">
+    <li>success<ul>
+      <li>
+        If the playback fails for some reason, the function will return
+        false. The device should be closed.
+      </li>
+    </ul></li>
+  </ul>
+  <h2>Notes</h2>
+  <p>
+    <i>device</i> is a userdata returned by either
+    <a href="ao_open_live.html">ao.openLive</a> or
+    <a href="ao_open_file.html">ao.openFile</a>.
+  </p>
+  <hr />
+  <span class="tiny">
+    <p class="fl">developed by Linus Sjögren</p>
+    <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
+    <br class="cb" />
+    <p class="fl"><a href="./index.html">back to index</a></p>
+    <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+    <br class="cb" />
+  </span>
+</body>
+</html>

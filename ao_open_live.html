@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>lao - function - ao.openLive</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+  <span class="tiny">
+    <p class="fl">lao documentation</p>
+    <p class="fr">lao version 1.0.0 - 20100905</p>
+    <br class="cb" />
+  </span>
+  <h1 class="cb">ao.openLive</h1>
+  <p>
+    Open a live playback device for output.
+  </p>
+  <pre class="declare"><i>userdata</i> device, <i>string</i> error = ao.openLive(<i>number</i> driverId, <i>table</i> format, <i>table</i> options)</pre>
+  <h2>Parameters</h2>
+  <ul class="vars">
+    <li>driverId<ul>
+      <li>
+        The ID number of the driver as returned by either
+        <a href="ao_driver_id.html">ao.driverId</a> or
+        <a href="ao_default_driver_id.html">ao.defaultDriverId</a>.
+      </li>
+    </ul></li>
+    <li>format<ul>
+      <li>
+        A table describing the sample format.
+      </li>
+      <li>
+        See also: <a href="sample_format.html">sampleFormat table</a>
+      </li>
+    </ul></li>
+    <li>options<ul>
+      <li>
+        A table containing options.
+      </li>
+      <li>
+        See also: <a href="option.html">options table</a>
+      </li>
+    </ul></li>
+  </ul>
+  <h2>Return Values</h2>
+  <ul class="vars">
+    <li>device<ul>
+      <li>
+        A non-nil result indicates success. You can now use the devices
+        metamethods <a href="device_play.html">play</a> and
+        <a href="device_close.html">close</a> to play audio and close the
+        device.
+      </li>
+      <li>
+        A nil result means something went wrong. The error message is
+        returned as the second return value.
+      </li>
+    </ul></li>
+    <li>error<ul>
+      <li>
+        A string describing what went wrong (if anything went wrong).
+        This can be one of the following:<ul>
+          <li>no such driver</li>
+          <li>not a live-type driver</li>
+          <li>a valid option-key has an invalid value</li>
+          <li>cannot open the device</li>
+          <li>something went wrong</li>
+      </ul></li>
+    </ul></li>
+  </ul>
+  <h2>Notes</h2>
+  <p>
+    File output drivers cannot be used with this function. Use
+    <a href="ao_open_file.html">ao.openFile</a> instead.
+  </p>
+  <hr />
+  <span class="tiny">
+    <p class="fl">developed by Linus Sjögren</p>
+    <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
+    <br class="cb" />
+    <p class="fl"><a href="./index.html">back to index</a></p>
+    <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+    <br class="cb" />
+  </span>
+</body>
+</html>

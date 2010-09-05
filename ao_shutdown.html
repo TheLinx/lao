@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>lao</title>
+<title>lao - function - ao.shutdown</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
@@ -9,18 +9,18 @@
     <p class="fr">lao version 1.0.0 - 20100905</p>
     <br class="cb" />
   </span>
-  <h1 class="cb">lao - libao bindings for Lua</h1>
+  <h1 class="cb">ao.shutdown</h1>
   <p>
-    lao is a Lua module that provides bindings to the audio library
-    libao, developed by xiph.org. It should work on any platform that
-    supports Lua and libao.
+    Shuts down the libao environment.
   </p>
-  <ul class="menu"><li><ul>
-    <li><a href="install.html">installation instructions</a></li>
-    <li><a href="overview.html">api overview</a></li>
-    <li><a href="reference.html">api reference</a></li>
-    <li><a href="credits.html">credits</a></li>
-  </ul></li></ul>
+  <pre class="declare">ao.shutdown()</pre>
+  <h2>Notes</h2>
+  <p>
+    Like <a href="ao_initialize.html">ao.initialize</a>, this
+    function is automatically called, but when the module is garbage collected,
+    in other words, when Lua finishes. You can still call it manually if
+    you wish to restart the libao environment.
+  </p>
   <hr />
   <span class="tiny">
     <p class="fl">developed by Linus Sjögren</p>

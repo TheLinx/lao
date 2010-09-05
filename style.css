@@ -1,32 +1,46 @@
-* {
-  font-family: helvetica, sans-serif;
-}
-
 body {
   color: #000;
   background-color: #FFF;
   margin: 0 10px;
   font-size: 12pt;
+  font-family: helvetica, sans-serif;
+}
+
+h1 {
+  font-size: 26pt;
+  margin-top: 5px;
+}
+h2 {
+  font-size: 16pt;
 }
 
 a {
   color: #55F;
 }
 
-ul.menu, ul.menu ul {
+ul.menu, ul.menu ul, ul.vars, ul.vars ul {
   list-style-type: none;
+}
+ul.menu, ul.menu ul, ul.vars {
   padding: 0;
 }
 ul.menu > li {
   font-weight: bold;
   margin-bottom: 20px;
 }
-ul.menu > li > ul > li {
+ul.menu > li > ul {
   font-weight: normal;
 }
 
 ul.notmenu > li {
   margin-bottom: 0.5em;
+}
+
+ul.vars > li {
+  font-style: italic;
+}
+ul.vars > li > ul{
+  font-style: normal;
 }
 
 hr {
@@ -40,6 +54,12 @@ hr {
 pre, tt, .tt {
   font-size: 10pt;
   font-family: monospace;
+}
+
+pre.declare {
+  background-color: #CCC;
+  padding: 4px;
+  font-weight: bold;
 }
 
 .tiny {
