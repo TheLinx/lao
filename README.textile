@@ -8,7 +8,7 @@ You need libao installed to use lao, and you need the libao headers to build it.
 
 h2. How to Install
 
-Run the command _luarocks install ao_
+Use LuaRocks to install the "ao" package.
 
 h2. Using lao in your script
 
