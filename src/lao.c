@@ -91,31 +91,28 @@ static int l_open_live(lua_State* L)
   ao_device *tdev = ao_open_live(driver_id, &fmt, &opt);
   if (!tdev)
   {
-    char err[61] = "";
     switch (errno)
     {
     case AO_ENODRIVER:
-      err "no such driver");
+      luaL_error(L, "no such driver");
       break;
     case AO_ENOTFILE:
-      err =  "not a file-type driver");
+      luaL_error(L,  "not a live-type driver");
       break;
     case AO_EBADOPTION:
-      err =  "a valid option key has an invalid value");
+      luaL_error(L,  "a valid option-key has an invalid value");
       break;
     case AO_EOPENFILE:
-      err =  "cannot open the device");
+      luaL_error(L,  "cannot open the device");
       break;
     case AO_EFAIL:
     default:
-      sprintf(err, "something went wrong");
+      luaL_error(L, "something went wrong");
       break;
     }
-    luaL_error(L, err);
   }
   else
     *dev = tdev;
-  *dev = tdev;
 
   return 1;
 }
@@ -140,31 +137,28 @@ static int l_open_file(lua_State* L)
   ao_device *tdev = ao_open_file(driver_id, filename, overwrite, &fmt, &opt);
   if (!tdev)
   {
-    char err[61] = "";
-    err =  "could not open device: ";
     switch (errno)
     {
     case AO_ENODRIVER:
-      err = "no such driver";
+      luaL_error(L, "no such driver");
       break;
     case AO_ENOTFILE:
-      err = "not a file-type driver";
+      luaL_error(L, "not a file-type driver");
       break;
     case AO_EBADOPTION:
-      err = "a valid option key has an invalid value";
+      luaL_error(L, "a valid option-key has an invalid value");
       break;
     case AO_EOPENFILE:
-      err = "cannot open the file";
+      luaL_error(L, "cannot open the file");
       break;
     case AO_EFILEEXISTS:
-      err = "file exists, not overwriting";
+      luaL_error(L, "file already exists");
       break;
     case AO_EFAIL:
     default:
-      err = "something went wrong";
+      luaL_error(L, "something went wrong");
       break;
     }
-    luaL_error(L, err);
   }
   else
     *dev = tdev;
@@ -177,13 +171,14 @@ static int l_play(lua_State *L)
   int num_bytes = luaL_checkint(L, 3);
   const char *samples = luaL_checklstring(L, 2, (size_t *) &num_bytes);
   int result = ao_play(dev, (char *)samples, (uint_32)num_bytes);
-  lua_pushnumber(L, result);
+  lua_pushboolean(L, result);
   return 1;
 }
 static int l_close_device(lua_State* L)
 {
   ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
-  ao_close(dev);
+  int result = ao_close(dev);
+  lua_pushboolean(L, result);
   return 0;
 }
 
@@ -248,13 +243,19 @@ static int l_driver_id(lua_State* L)
 {
   const char *driver = luaL_checkstring(L, 1);
   int driverId = ao_driver_id((char *)driver);
-  lua_pushinteger(L, driverId);
+  if (driverId == -1)
+    lua_pushnil(L);
+  else
+    lua_pushinteger(L, driverId);
   return 1;
 }
 static int l_default_driver_id(lua_State* L)
 {
   int default_driver = ao_default_driver_id();
-  lua_pushinteger(L, default_driver);
+  if (default_driver == -1)
+    lua_pushnil(L);
+  else
+    lua_pushinteger(L, default_driver);
   return 1;
 }
 static int l_driver_info(lua_State *L)
