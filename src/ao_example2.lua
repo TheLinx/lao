@@ -1,6 +1,3 @@
---[[
-  Note: This is just a concept for now. It doesn't work. At all.
-]]
 require("ao")
 require("bit")
 
