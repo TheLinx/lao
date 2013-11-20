@@ -64,9 +64,9 @@ struct ao_sample_format table2sampleformat(lua_State* L, int index)
 	return fmt;
 }
 
-struct ao_option table2option(lua_State* L, int index)
+struct ao_option *table2option(lua_State* L, int index)
 {
-	struct ao_option *opt;
+	struct ao_option *opt = NULL;
 	if (!lua_isnoneornil(L, index))
 	{
 		lua_pushnil(L);
@@ -78,7 +78,7 @@ struct ao_option table2option(lua_State* L, int index)
 			lua_pop(L, 1);
 		}
 	}
-	return *opt;
+	return opt;
 }
 
 //actual functions
@@ -86,7 +86,7 @@ static int l_open_live(lua_State* L)
 {
 	int driver_id = luaL_checkint(L, 1);
 	struct ao_sample_format fmt = table2sampleformat(L, 2);
-	struct ao_option opt = table2option(L, 3);
+	struct ao_option *opt = table2option(L, 3);
 	size_t nbytes;
 
 	nbytes = sizeof(ao_device*);
@@ -96,7 +96,10 @@ static int l_open_live(lua_State* L)
 
 	memset(dev, 0, nbytes); //clear it before using
 
-	ao_device *tdev = ao_open_live(driver_id, &fmt, &opt);
+	ao_device *tdev = ao_open_live(driver_id, &fmt, opt);
+	if (opt)
+		ao_free_options(opt);
+
 	if (!tdev)
 	{
 		switch (errno)
@@ -104,13 +107,13 @@ static int l_open_live(lua_State* L)
 			case AO_ENODRIVER:
 				luaL_error(L, "no such driver");
 				break;
-			case AO_ENOTFILE:
+			case AO_ENOTLIVE:
 				luaL_error(L,  "not a live-type driver");
 				break;
 			case AO_EBADOPTION:
 				luaL_error(L,  "a valid option-key has an invalid value");
 				break;
-			case AO_EOPENFILE:
+			case AO_EOPENDEVICE:
 				luaL_error(L,  "cannot open the device");
 				break;
 			case AO_EFAIL:
@@ -133,7 +136,7 @@ static int l_open_file(lua_State* L)
 		luaL_error(L, "bad argument #3 to 'openFile' (boolean expected)");
 	int overwrite = lua_toboolean(L, 3);
 	struct ao_sample_format fmt = table2sampleformat(L, 4);
-	struct ao_option opt = table2option(L, 5);
+	struct ao_option *opt = table2option(L, 5);
 	size_t nbytes;
 
 	nbytes = sizeof(ao_device*);
@@ -143,7 +146,10 @@ static int l_open_file(lua_State* L)
 
 	memset(dev, 0, nbytes); //clear it before using
 
-	ao_device *tdev = ao_open_file(driver_id, filename, overwrite, &fmt, &opt);
+	ao_device *tdev = ao_open_file(driver_id, filename, overwrite, &fmt, opt);
+	if (opt)
+		ao_free_options(opt);
+
 	if (!tdev)
 	{
 		switch (errno)
