@@ -33,6 +33,8 @@ struct ao_sample_format table2sampleformat(lua_State* L, int index)
 	ao_sample_format fmt;
 	const char *byte_format;
 
+	fmt.matrix = 0;
+
 	lua_pushstring(L, "bits");
 	lua_gettable(L, index);
 	fmt.bits = luaL_checkint(L, -1);
