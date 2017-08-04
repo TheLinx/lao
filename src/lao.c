@@ -178,7 +178,7 @@ static int l_open_file(lua_State* L)
 
 static int l_play(lua_State *L)
 {
-	ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
+	ao_device *dev = *((ao_device **) luaL_checkudata(L, 1, "ao.device"));
 	size_t len;
 	const char *samples = luaL_checklstring(L, 2, &len);
 	uint_32 num_bytes = (uint_32) luaL_optinteger(L, 3, len);
@@ -192,7 +192,7 @@ static int l_play(lua_State *L)
 
 static int l_close_device(lua_State* L)
 {
-	ao_device **dev = lua_touserdata(L, 1);
+	ao_device **dev = luaL_checkudata(L, 1, "ao.device");
 	if (*dev != NULL) {
 		ao_close(*dev);
 		*dev = NULL;
