@@ -370,6 +370,10 @@ int luaopen_ao(lua_State* L)
 	lua_pushstring(L, "play");
 	lua_pushcfunction(L, l_play);
 	lua_settable(L, -3);
-	luaL_register(L, "ao", ao);
+#if LUA_VERSION_NUM >= 502
+	luaL_newlib(L, ao);    /* 5.2 */
+#else
+	luaL_register(L, "ao", ao);  /* 5.1 */
+#endif
 	return 1;
 }

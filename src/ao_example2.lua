@@ -1,4 +1,4 @@
-require("ao")
+local ao = require("ao")
 require("bit")
 
 local schar = string.char
