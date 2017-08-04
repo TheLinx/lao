@@ -211,7 +211,7 @@ static int l_close_device(lua_State* L)
 void info2luaTable(lua_State* L, ao_info* inf)
 {
 	int i;
-	lua_newtable(L);
+	lua_createtable(L, 0, 7);
 
 	switch (inf->type)
 	{
@@ -252,7 +252,7 @@ void info2luaTable(lua_State* L, ao_info* inf)
 	lua_pushinteger(L, inf->priority);
 	lua_setfield(L, -2, "priority");
 
-	lua_newtable(L);
+	lua_createtable(L, inf->option_count, 0);
 	for (i = 0; i < inf->option_count; i++)
 	{
 		lua_pushstring(L, inf->options[i]);
@@ -304,7 +304,7 @@ static int l_driver_info_list(lua_State *L)
 {
 	int count, i, driverid;
 	ao_info **infa = ao_driver_info_list(&count);
-	lua_newtable(L);
+	lua_createtable(L, count, 0);
 	for (i = 0; i < count; i++)
 	{
 		driverid = ao_driver_id(infa[i]->short_name);
