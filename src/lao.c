@@ -25,7 +25,7 @@ static int l___gc(lua_State* L)
 
 /* --  Device Setup/Playback/Teardown -- */
 // backend stuff
-struct ao_sample_format table2sampleformat(lua_State* L, int index)
+static struct ao_sample_format table2sampleformat(lua_State* L, int index)
 {
 	if(lua_type(L, index) != LUA_TTABLE)
 		luaL_error(L, "that's not a table!");
@@ -62,7 +62,7 @@ struct ao_sample_format table2sampleformat(lua_State* L, int index)
 	return fmt;
 }
 
-struct ao_option *table2option(lua_State* L, int index)
+static struct ao_option *table2option(lua_State* L, int index)
 {
 	struct ao_option *opt = NULL;
 	if (!lua_isnoneornil(L, index))
@@ -197,7 +197,7 @@ static int l_close_device(lua_State* L)
 
 /* -- Driver Information -- */
 //backend stuff
-void info2luaTable(lua_State* L, ao_info* inf)
+static void info2luaTable(lua_State* L, ao_info* inf)
 {
 	int i;
 	lua_createtable(L, 0, 7);
