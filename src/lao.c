@@ -190,9 +190,8 @@ static int l_play(lua_State *L)
 static int l_close_device(lua_State* L)
 {
 	ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
-
-	int result = ao_close(dev);
-	lua_pushboolean(L, result);
+	if (dev != NULL)
+		ao_close(dev);
 	return 0;
 }
 
