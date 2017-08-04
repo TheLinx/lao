@@ -213,7 +213,6 @@ void info2luaTable(lua_State* L, ao_info* inf)
 	int i;
 	lua_newtable(L);
 
-	lua_pushstring(L, "type");
 	switch (inf->type)
 	{
 		case AO_TYPE_LIVE:
@@ -223,24 +222,19 @@ void info2luaTable(lua_State* L, ao_info* inf)
 			lua_pushstring(L, "file");
 			break;
 	}
-	lua_settable(L, -3);
+	lua_setfield(L, -2, "type");
 
-	lua_pushstring(L, "name");
 	lua_pushstring(L, inf->name);
-	lua_settable(L, -3);
+	lua_setfield(L, -2, "name");
 
-	lua_pushstring(L, "shortName");
 	lua_pushstring(L, inf->short_name);
-	lua_settable(L, -3);
+	lua_setfield(L, -2, "shortName");
 
-	lua_pushstring(L, "comment");
-	if (inf->comment)
+	if (inf->comment) {
 		lua_pushstring(L, inf->comment);
-	else
-		lua_pushnil(L);
-	lua_settable(L, -3);
+		lua_setfield(L, -2, "comment");
+	}
 
-	lua_pushstring(L, "preferredByteFormat");
 	switch (inf->preferred_byte_format)
 	{
 		case AO_FMT_LITTLE:
@@ -253,21 +247,18 @@ void info2luaTable(lua_State* L, ao_info* inf)
 			lua_pushstring(L, "native");
 			break;
 	}
-	lua_settable(L, -3);
+	lua_setfield(L, -2, "preferredByteFormat");
 
-	lua_pushstring(L, "priority");
 	lua_pushinteger(L, inf->priority);
-	lua_settable(L, -3);
+	lua_setfield(L, -2, "priority");
 
-	lua_pushstring(L, "options");
 	lua_newtable(L);
 	for (i = 0; i < inf->option_count; i++)
 	{
-		lua_pushinteger(L, i+1);
 		lua_pushstring(L, inf->options[i]);
-		lua_settable(L, -3);
+		lua_rawseti(L, -2, i+1);
 	}
-	lua_settable(L, -3);
+	lua_setfield(L, -2, "options");
 }
 
 //actual functions
@@ -317,9 +308,8 @@ static int l_driver_info_list(lua_State *L)
 	for (i = 0; i < count; i++)
 	{
 		driverid = ao_driver_id(infa[i]->short_name);
-		lua_pushinteger(L, driverid);
 		info2luaTable(L, infa[i]);
-		lua_settable(L, -3);
+		lua_rawseti(L, -2, driverid);
 	}
 	return 1;
 }
@@ -361,15 +351,12 @@ int luaopen_ao(lua_State* L)
 	luaL_newmetatable(L, "ao.device");
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
-	lua_pushstring(L, "__gc");
 	lua_pushcfunction(L, l_close_device);
-	lua_settable(L, -3);
-	lua_pushstring(L, "close");
+	lua_setfield(L, -2, "__gc");
 	lua_pushcfunction(L, l_close_device);
-	lua_settable(L, -3);
-	lua_pushstring(L, "play");
+	lua_setfield(L, -2, "close");
 	lua_pushcfunction(L, l_play);
-	lua_settable(L, -3);
+	lua_setfield(L, -2, "play");
 #if LUA_VERSION_NUM >= 502
 	luaL_newlib(L, ao);    /* 5.2 */
 #else
