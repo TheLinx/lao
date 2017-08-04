@@ -35,23 +35,19 @@ struct ao_sample_format table2sampleformat(lua_State* L, int index)
 
 	fmt.matrix = 0;
 
-	lua_pushstring(L, "bits");
-	lua_gettable(L, index);
+	lua_getfield(L, index, "bits");
 	fmt.bits = luaL_checkinteger(L, -1);
 	lua_pop(L, 1);
 
-	lua_pushstring(L, "channels");
-	lua_gettable(L, index);
+	lua_getfield(L, index, "channels");
 	fmt.channels = luaL_checkinteger(L, -1);
 	lua_pop(L, 1);
 
-	lua_pushstring(L, "rate");
-	lua_gettable(L, index);
+	lua_getfield(L, index, "rate");
 	fmt.rate = luaL_checkinteger(L, -1);
 	lua_pop(L, 1);
 
-	lua_pushstring(L, "byteFormat");
-	lua_gettable(L, index);
+	lua_getfield(L, index, "byteFormat");
 	byte_format = luaL_checkstring(L, -1);
 	lua_pop(L, 1);
 
