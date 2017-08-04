@@ -191,9 +191,7 @@ static int l_play(lua_State *L)
 	uint_32 num_bytes = (uint_32) luaL_optinteger(L, 3, len);
 	luaL_argcheck(L, num_bytes <= len, 3, "too many bytes");
 
-	char *buffer = strndup(samples, num_bytes);
-	int result = ao_play(dev, buffer, num_bytes);
-	free(buffer);
+	int result = ao_play(dev, (char*)samples, num_bytes);
 
 	lua_pushboolean(L, result);
 	return 1;
