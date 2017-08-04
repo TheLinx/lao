@@ -186,8 +186,10 @@ static int l_open_file(lua_State* L)
 static int l_play(lua_State *L)
 {
 	ao_device *dev = *((ao_device **) lua_touserdata(L, 1));
-	const char *samples = luaL_checkstring(L, 2);
-	uint_32 num_bytes = (uint_32) luaL_checkinteger(L, 3);
+	size_t len;
+	const char *samples = luaL_checklstring(L, 2, &len);
+	uint_32 num_bytes = (uint_32) luaL_optinteger(L, 3, len);
+	luaL_argcheck(L, num_bytes <= len, 3, "too many bytes");
 
 	char *buffer = strndup(samples, num_bytes);
 	int result = ao_play(dev, buffer, num_bytes);
