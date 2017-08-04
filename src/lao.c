@@ -9,16 +9,19 @@
 /* -- Library Setup/Teardown -- */
 static int l_initialize(lua_State* L)
 {
+	(void)L;
 	ao_initialize();
 	return 0;
 }
 static int l_shutdown(lua_State* L)
 {
+	(void)L;
 	ao_shutdown();
 	return 0;
 }
 static int l___gc(lua_State* L)
 {
+	(void)L;
 	ao_shutdown();
 	return 0;
 }
