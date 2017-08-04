@@ -1,6 +1,5 @@
 ### Config ###
 LUAINCLUDE=-I/usr/include/lua5.1
-LUALIB=-llua5.1
 AOINCLUDE=
 AOLIB=-lao
 
@@ -8,7 +7,7 @@ AOLIB=-lao
 CC=cc
 CFLAGS=-Wall -Wextra
 CPPFLAGS=$(LUAINCLUDE) $(AOINCLUDE)
-LDFLAGS=$(LUALIB) $(AOLIB)
+LDFLAGS=$(AOLIB)
 SUFFIX=.so
 
 .PHONY: all clean
