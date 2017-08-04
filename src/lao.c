@@ -205,10 +205,10 @@ void info2luaTable(lua_State* L, ao_info* inf)
 	switch (inf->type)
 	{
 		case AO_TYPE_LIVE:
-			lua_pushstring(L, "live");
+			lua_pushliteral(L, "live");
 			break;
 		case AO_TYPE_FILE:
-			lua_pushstring(L, "file");
+			lua_pushliteral(L, "file");
 			break;
 	}
 	lua_setfield(L, -2, "type");
@@ -227,13 +227,13 @@ void info2luaTable(lua_State* L, ao_info* inf)
 	switch (inf->preferred_byte_format)
 	{
 		case AO_FMT_LITTLE:
-			lua_pushstring(L, "little");
+			lua_pushliteral(L, "little");
 			break;
 		case AO_FMT_BIG:
-			lua_pushstring(L, "big");
+			lua_pushliteral(L, "big");
 			break;
 		case AO_FMT_NATIVE:
-			lua_pushstring(L, "native");
+			lua_pushliteral(L, "native");
 			break;
 	}
 	lua_setfield(L, -2, "preferredByteFormat");
@@ -279,7 +279,7 @@ static int l_driver_info(lua_State *L)
 	if (!inf)
 	{
 		lua_pushnil(L);
-		lua_pushstring(L, "invalid device id");
+		lua_pushliteral(L, "invalid device id");
 		return 2;
 	}
 	else
