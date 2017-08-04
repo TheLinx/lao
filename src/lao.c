@@ -84,8 +84,9 @@ static int l_open_live(lua_State* L)
 {
 	int driver_id = luaL_checkinteger(L, 1);
 	struct ao_sample_format fmt = table2sampleformat(L, 2);
-	struct ao_option *opt = table2option(L, 3);
+	struct ao_option *opt;
 	size_t nbytes;
+	lua_settop(L, 3);
 
 	nbytes = sizeof(ao_device*);
 	ao_device **dev = (ao_device **)lua_newuserdata(L, nbytes);
@@ -93,6 +94,8 @@ static int l_open_live(lua_State* L)
 	lua_setmetatable(L, -2);
 
 	memset(dev, 0, nbytes); //clear it before using
+
+	opt = table2option(L, 3);
 
 	ao_device *tdev = ao_open_live(driver_id, &fmt, opt);
 	if (opt)
@@ -134,8 +137,9 @@ static int l_open_file(lua_State* L)
 		luaL_error(L, "bad argument #3 to 'openFile' (boolean expected)");
 	int overwrite = lua_toboolean(L, 3);
 	struct ao_sample_format fmt = table2sampleformat(L, 4);
-	struct ao_option *opt = table2option(L, 5);
+	struct ao_option *opt;
 	size_t nbytes;
+	lua_settop(L, 5);
 
 	nbytes = sizeof(ao_device*);
 	ao_device **dev = (ao_device **)lua_newuserdata(L, nbytes);
@@ -143,6 +147,8 @@ static int l_open_file(lua_State* L)
 	lua_setmetatable(L, -2);
 
 	memset(dev, 0, nbytes); //clear it before using
+
+	opt = table2option(L, 5);
 
 	ao_device *tdev = ao_open_file(driver_id, filename, overwrite, &fmt, opt);
 	if (opt)
