@@ -78,7 +78,8 @@ static struct ao_option *table2option(lua_State* L, int index)
 		{
 			const char *key = luaL_checkstring(L, -2);
 			const char *val = luaL_checkstring(L, -1);
-			ao_append_option(&opt, key, val);
+			if (!ao_append_option(&opt, key, val))
+				luaL_error(L, "out of memory");
 			lua_pop(L, 1);
 		}
 	}
