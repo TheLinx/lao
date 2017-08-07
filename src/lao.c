@@ -352,6 +352,14 @@ static int l_is_big_endian(lua_State *L)
 	return 1;
 }
 
+static int l_append_global_option(lua_State *L)
+{
+	const char *key = luaL_checkstring(L, 1);
+	const char *val = luaL_checkstring(L, 2);
+	lua_pushboolean(L, ao_append_global_option(key, val));
+	return 1;
+}
+
 /* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
 	{"initialize", l_initialize},
@@ -364,6 +372,7 @@ static const luaL_Reg ao [] = {
 	{"driverInfoList", l_driver_info_list},
 	{"fileExtension", l_file_extension},
 	{"isBigEndian", l_is_big_endian},
+	{"appendGlobalOption", l_append_global_option},
 	{"__gc", l___gc},
 	{NULL, NULL}
 };
