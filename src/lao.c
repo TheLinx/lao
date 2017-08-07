@@ -7,22 +7,25 @@
 #include "ao/ao.h"
 
 /* -- Library Setup/Teardown -- */
+static int has_initialized = 0;
 static int l_initialize(lua_State* L)
 {
 	(void)L;
 	ao_initialize();
+	has_initialized = 1;
 	return 0;
 }
 static int l_shutdown(lua_State* L)
 {
 	(void)L;
 	ao_shutdown();
+	has_initialized = 0;
 	return 0;
 }
 static int l___gc(lua_State* L)
 {
-	(void)L;
-	ao_shutdown();
+	if (has_initialized)
+		l_shutdown(L);
 	return 0;
 }
 
@@ -90,6 +93,9 @@ static int l_open_live(lua_State* L)
 	struct ao_option *opt;
 	lua_settop(L, 3);
 
+	if (!has_initialized)
+		l_initialize(L);
+
 	ao_device **dev = (ao_device **)lua_newuserdata(L, sizeof(ao_device*));
 	luaL_getmetatable(L, "ao.device");
 	lua_setmetatable(L, -2);
@@ -142,6 +148,9 @@ static int l_open_file(lua_State* L)
 	lua_setmetatable(L, -2);
 
 	opt = table2option(L, 5);
+
+	if (!has_initialized)
+		l_initialize(L);
 
 	*dev = ao_open_file(driver_id, filename, overwrite, &fmt, opt);
 	if (opt)
@@ -259,8 +268,12 @@ static void info2luaTable(lua_State* L, ao_info* inf)
 static int l_driver_id(lua_State* L)
 {
 	const char *driver = luaL_checkstring(L, 1);
-	int driverId = ao_driver_id((char *)driver);
-	if (driverId == -1)
+	int driverId;
+
+	if (!has_initialized)
+		l_initialize(L);
+
+	if ((driverId = ao_driver_id((char *)driver)) == -1)
 		lua_pushnil(L);
 	else
 		lua_pushinteger(L, driverId);
@@ -269,8 +282,12 @@ static int l_driver_id(lua_State* L)
 }
 static int l_default_driver_id(lua_State* L)
 {
-	int default_driver = ao_default_driver_id();
-	if (default_driver == -1)
+	int default_driver;
+
+	if (!has_initialized)
+		l_initialize(L);
+
+	if ((default_driver = ao_default_driver_id()) == -1)
 		lua_pushnil(L);
 	else
 		lua_pushinteger(L, default_driver);
@@ -280,8 +297,12 @@ static int l_default_driver_id(lua_State* L)
 static int l_driver_info(lua_State *L)
 {
 	int driver_id = luaL_checkinteger(L, 1);
-	ao_info *inf = ao_driver_info(driver_id);
-	if (!inf)
+	ao_info *inf;
+
+	if (!has_initialized)
+		l_initialize(L);
+
+	if (!(inf = ao_driver_info(driver_id)))
 	{
 		lua_pushnil(L);
 		lua_pushliteral(L, "invalid device id");
@@ -297,7 +318,12 @@ static int l_driver_info(lua_State *L)
 static int l_driver_info_list(lua_State *L)
 {
 	int count, i, driverid;
-	ao_info **infa = ao_driver_info_list(&count);
+	ao_info **infa;
+
+	if (!has_initialized)
+		l_initialize(L);
+
+	infa = ao_driver_info_list(&count);
 	lua_createtable(L, count, 0);
 	for (i = 0; i < count; i++)
 	{
@@ -310,10 +336,13 @@ static int l_driver_info_list(lua_State *L)
 
 static int l_file_extension(lua_State *L)
 {
-    int driverId = luaL_checkinteger(L, 1);
-    const char *ext = ao_file_extension(driverId);
-    lua_pushstring(L, ext);
-    return 1;
+	int driverId = luaL_checkinteger(L, 1);
+
+	if (!has_initialized)
+		l_initialize(L);
+
+	lua_pushstring(L, ao_file_extension(driverId));
+	return 1;
 }
 
 /* -- Miscellaneous -- */
@@ -341,7 +370,6 @@ static const luaL_Reg ao [] = {
 
 int luaopen_ao(lua_State* L)
 {
-	ao_initialize();
 	luaL_newmetatable(L, "ao.device");
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
