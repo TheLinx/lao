@@ -372,7 +372,6 @@ static const luaL_Reg ao [] = {
 	{"fileExtension", l_file_extension},
 	{"isBigEndian", l_is_big_endian},
 	{"appendGlobalOption", l_append_global_option},
-	{"__gc", l_shutdown},
 	{NULL, NULL}
 };
 
