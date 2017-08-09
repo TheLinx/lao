@@ -26,11 +26,6 @@ static int l_shutdown(lua_State* L)
 	}
 	return 0;
 }
-static int l___gc(lua_State* L)
-{
-	l_shutdown(L);
-	return 0;
-}
 static int l_setinitialized(lua_State* L)
 {
 	int new_initialized = (luaL_checktype(L, 1, LUA_TBOOLEAN), lua_toboolean(L, 1));
@@ -377,7 +372,7 @@ static const luaL_Reg ao [] = {
 	{"fileExtension", l_file_extension},
 	{"isBigEndian", l_is_big_endian},
 	{"appendGlobalOption", l_append_global_option},
-	{"__gc", l___gc},
+	{"__gc", l_shutdown},
 	{NULL, NULL}
 };
 
