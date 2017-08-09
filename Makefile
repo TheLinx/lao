@@ -4,7 +4,6 @@ AOINCLUDE=
 AOLIB=-lao
 
 ### 'Code' ###
-CC=cc
 CFLAGS=-Wall -Wextra
 CPPFLAGS=$(LUAINCLUDE) $(AOINCLUDE)
 LDFLAGS=$(AOLIB)
