@@ -1,5 +1,5 @@
 local ao = require("ao")
-require("bit")
+local bit = require("bit")
 
 local schar = string.char
 
