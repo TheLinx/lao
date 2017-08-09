@@ -1,5 +1,5 @@
 ### Config ###
-LUAINCLUDE=-I/usr/include/lua5.1
+LUAINCLUDE=-I/usr/include/lua
 AOINCLUDE=
 AOLIB=-lao
 
