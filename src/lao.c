@@ -31,6 +31,12 @@ static int l___gc(lua_State* L)
 	l_shutdown(L);
 	return 0;
 }
+static int l_setinitialized(lua_State* L)
+{
+	int new_initialized = (luaL_checktype(L, 1, LUA_TBOOLEAN), lua_toboolean(L, 1));
+	has_initialized = new_initialized;
+	return 0;
+}
 
 /* --  Device Setup/Playback/Teardown -- */
 // backend stuff
@@ -360,6 +366,7 @@ static int l_append_global_option(lua_State *L)
 /* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
 	{"initialize", l_initialize},
+	{"setinitialized", l_setinitialized},
 	{"shutdown", l_shutdown},
 	{"openLive", l_open_live},
 	{"openFile", l_open_file},
