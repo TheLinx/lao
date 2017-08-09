@@ -11,21 +11,24 @@ static int has_initialized = 0;
 static int l_initialize(lua_State* L)
 {
 	(void)L;
-	ao_initialize();
-	has_initialized = 1;
+	if (!has_initialized) {
+		ao_initialize();
+		has_initialized = 1;
+	}
 	return 0;
 }
 static int l_shutdown(lua_State* L)
 {
 	(void)L;
-	ao_shutdown();
-	has_initialized = 0;
+	if (has_initialized) {
+		ao_shutdown();
+		has_initialized = 0;
+	}
 	return 0;
 }
 static int l___gc(lua_State* L)
 {
-	if (has_initialized)
-		l_shutdown(L);
+	l_shutdown(L);
 	return 0;
 }
 
@@ -94,8 +97,7 @@ static int l_open_live(lua_State* L)
 	struct ao_option *opt;
 	lua_settop(L, 3);
 
-	if (!has_initialized)
-		l_initialize(L);
+	l_initialize(L);
 
 	ao_device **dev = (ao_device **)lua_newuserdata(L, sizeof(ao_device*));
 	luaL_getmetatable(L, "ao.device");
@@ -150,8 +152,7 @@ static int l_open_file(lua_State* L)
 
 	opt = table2option(L, 5);
 
-	if (!has_initialized)
-		l_initialize(L);
+	l_initialize(L);
 
 	*dev = ao_open_file(driver_id, filename, overwrite, &fmt, opt);
 	if (opt)
@@ -271,8 +272,7 @@ static int l_driver_id(lua_State* L)
 	const char *driver = luaL_checkstring(L, 1);
 	int driverId;
 
-	if (!has_initialized)
-		l_initialize(L);
+	l_initialize(L);
 
 	if ((driverId = ao_driver_id((char *)driver)) == -1)
 		lua_pushnil(L);
@@ -285,8 +285,7 @@ static int l_default_driver_id(lua_State* L)
 {
 	int default_driver;
 
-	if (!has_initialized)
-		l_initialize(L);
+	l_initialize(L);
 
 	if ((default_driver = ao_default_driver_id()) == -1)
 		lua_pushnil(L);
@@ -300,8 +299,7 @@ static int l_driver_info(lua_State *L)
 	int driver_id = luaL_checkinteger(L, 1);
 	ao_info *inf;
 
-	if (!has_initialized)
-		l_initialize(L);
+	l_initialize(L);
 
 	if (!(inf = ao_driver_info(driver_id)))
 	{
@@ -321,8 +319,7 @@ static int l_driver_info_list(lua_State *L)
 	int count, i, driverid;
 	ao_info **infa;
 
-	if (!has_initialized)
-		l_initialize(L);
+	l_initialize(L);
 
 	infa = ao_driver_info_list(&count);
 	lua_createtable(L, count, 0);
@@ -339,8 +336,7 @@ static int l_file_extension(lua_State *L)
 {
 	int driverId = luaL_checkinteger(L, 1);
 
-	if (!has_initialized)
-		l_initialize(L);
+	l_initialize(L);
 
 	lua_pushstring(L, ao_file_extension(driverId));
 	return 1;
