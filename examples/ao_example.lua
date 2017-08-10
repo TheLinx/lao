@@ -1,5 +1,18 @@
 local ao = require("ao")
-local bit = require("bit")
+
+local numeric_version = string.gsub(_VERSION, "^%D+", "")
+if tonumber(numeric_version) < 5.2 then
+  _G.bit = require 'bit'  -- LuaBitOp http://bitop.luajit.org/api.html
+elseif _G.bit32 then
+  _G.bit = _G.bit32
+else
+  local f = load([[
+  _G.bit.bor    = function (a,b) return a|b  end
+  _G.bit.band   = function (a,b) return a&b  end
+  _G.bit.rshift = function (a,n) return a>>n end
+  ]])
+  f()
+end
 
 local schar = string.char
 
