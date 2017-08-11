@@ -7,6 +7,7 @@ elseif _G.bit32 then
   _G.bit = _G.bit32
 else
   local f = load([[
+  _G.bit = {}
   _G.bit.bor    = function (a,b) return a|b  end
   _G.bit.band   = function (a,b) return a&b  end
   _G.bit.rshift = function (a,n) return a>>n end
