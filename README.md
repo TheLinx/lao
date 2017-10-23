@@ -13,7 +13,6 @@ to provide Lua with portable audio output.
 [sampleFormat](http://thelinx.github.io/lao/sample_format.html)   
    
 **Environment Setup/Teardown**   
-
 [ao.initialize](http://thelinx.github.io/lao/ao_initialize.html)   
 [ao.shutdown](http://thelinx.github.io/lao/ao_shutdown.html)   
    
@@ -42,15 +41,15 @@ but has been simplified so you don't have to deal with a special type
 of userdata with sample formats, options, etc.
 To use lao, follow these steps:
 
-*   *local ao = require("ao").*
-*   Unlike in libao, *ao.initalize* is called when lao is required. But you can still call it to restart a libao environment after you've called *ao.shutdown*.
-*   Call *ao.defaultDriverId* to get the ID number of the default output driver. If you want to specify a particular output driver, you may call *ao.driverId* with a string corresponding to the short name of the device (i.e. "oss", "wav", et.c.) instead.
-*   If you are using the default device, no extra options are needed. However, if you wish to pass special options to the device, you will need to supply an option table to the *ao.Open* function.
-*   Call *ao.openLive* and save the return value (!). That will be the device you use, and without it you can't play anything. If you want file output, call *ao.openFile* instead.
-*   Call *device:play* on each block of audio.
+*   *local ao = require("ao")*
+*   Unlike in libao, *ao.initalize* is called when lao is required. But you can still call it to restart a libao environment after you've called *ao.shutdown*
+*   Call *ao.defaultDriverId* to get the ID number of the default output driver. If you want to specify a particular output driver, you may call *ao.driverId* with a string corresponding to the short name of the device (i.e. "oss", "wav", et.c.) instead
+*   If you are using the default device, no extra options are needed. However, if you wish to pass special options to the device, you will need to supply an option table to the *ao.Open* function
+*   Call *ao.openLive* and save the return value (!). That will be the device you use, and without it you can't play anything. If you want file output, call *ao.openFile* instead
+*   Call *device:play* on each block of audio
 *   The following steps are optional since they're done by lao's *__gc* handlers, but you may want to do them manually for different reasons:
-*   Call *device:close* to close the device,
-*   Call *ao.shutdown* to shutdown the libao environment.
+*   Call *device:close* to close the device
+*   Call *ao.shutdown* to shutdown the libao environment
 
 ## Example
 
@@ -62,7 +61,7 @@ To use lao, follow these steps:
        -- Open the driver
        device = assert( ao.openLive(default_driver, format) )
        -- Play a one-second beep
-       buf_size = format.bits/8 * format.channels * format.rate
+       buf_size = format.channels * format.rate * format.bits/8
        local freq = 440.0
        buffer = {}
        for i = 0,format.rate do    -- one second
@@ -74,11 +73,11 @@ To use lao, follow these steps:
           buffer[4*i+2] = schar(b)
           buffer[4*i+4] = schar(b)
        end
-       device:play(table.concat(buffer), buf_size, {})
+       device:play(table.concat(buffer), buf_size)
 
 ## Installation
 
-Use LuaRocks to install the **ao** package.
+Use *LuaRocks* to install the **ao** package:
 
        luarocks install ao
 
