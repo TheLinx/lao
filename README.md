@@ -1,40 +1,40 @@
 # lao
 
 This is a Lua module with bindings to
-[libao the Cross Platform Audio Output Library](https://xiph.org/ao/doc/libao-api.html),
+[libao the Cross Platform Audio Output Library](https://xiph.org/ao/),
 to provide Lua with portable audio output.
 
 ## API
 
 **Data Structures**   
-[device](http://thelinx.github.io/lao/device.html)   
-[info](http://thelinx.github.io/lao/info.html)   
-[options](http://thelinx.github.io/lao/option.html)   
-[sampleFormat](http://thelinx.github.io/lao/sample_format.html)   
+[device](http://rawgit.com/thelinx/lao/doc/device.html)   
+[info](http://rawgit.com/thelinx/lao/doc/info.html)   
+[options](http://rawgit.com/thelinx/lao/doc/option.html)   
+[sampleFormat](http://rawgit.com/thelinx/lao/doc/sample_format.html)   
    
 **Environment Setup/Teardown**   
-[ao.initialize](http://thelinx.github.io/lao/ao_initialize.html)   
-[ao.shutdown](http://thelinx.github.io/lao/ao_shutdown.html)   
+[ao.initialize](http://rawgit.com/thelinx/lao/doc/ao_initialize.html)   
+[ao.shutdown](http://rawgit.com/thelinx/lao/doc/ao_shutdown.html)   
    
 **Device Setup/Playback/Teardown**   
-[ao.openLive](http://thelinx.github.io/lao/ao_open_live.html)   
-[ao.openFile](http://thelinx.github.io/lao/ao_open_file.html)   
-[device:play](http://thelinx.github.io/lao/device_play.html)   
-[device:close](http://thelinx.github.io/lao/device_close.html)   
+[ao.openLive](http://rawgit.com/thelinx/lao/doc/ao_open_live.html)   
+[ao.openFile](http://rawgit.com/thelinx/lao/doc/ao_open_file.html)   
+[device:play](http://rawgit.com/thelinx/lao/doc/device_play.html)   
+[device:close](http://rawgit.com/thelinx/lao/doc/device_close.html)   
    
 **Driver Information**   
-[ao.driverId](http://thelinx.github.io/lao/ao_driver_id.html)   
-[ao.defaultDriverId](http://thelinx.github.io/lao/ao_default_driver_id.html)   
-[ao.driverInfo](http://thelinx.github.io/lao/ao_driver_info.html)   
-[ao.driverInfoList](http://thelinx.github.io/lao/ao_driver_info_list.html)   
+[ao.driverId](http://rawgit.com/thelinx/lao/doc/ao_driver_id.html)   
+[ao.defaultDriverId](http://rawgit.com/thelinx/lao/doc/ao_default_driver_id.html)   
+[ao.driverInfo](http://rawgit.com/thelinx/lao/doc/ao_driver_info.html)   
+[ao.driverInfoList](http://rawgit.com/thelinx/lao/doc/ao_driver_info_list.html)   
    
 **Miscellaneous**   
-[ao.isBigEndian](http://thelinx.github.io/lao/ao_is_big_endian.html)
+[ao.isBigEndian](http://rawgit.com/thelinx/lao/doc/ao_is_big_endian.html)
 
 ## Summary
 
-lao sticks to libao principles, but makes sure you're
-still writing Lua. The API is very
+lao sticks to libao principles, but ensures you're still writing Lua.
+The API is
 [similar to libao's,](https://xiph.org/ao/doc/libao-api.html)
 but simplified so you don't have to deal with a special type
 of userdata containing the sample formats, options etc.
@@ -88,10 +88,10 @@ For example on *debian* :
        aptitude install libao-dev
 
 To check it installed successfully, you can download and run
-[examples/ao\_live.lua](https://github.com/TheLinx/lao/blob/master/examples/ao_live.lua)   
+[examples/ao\_live.lua](https://rawgit.com/TheLinx/lao/master/examples/ao_live.lua)   
 You should hear a 440-Hz sine wave for about a second.   
 And also
-[examples/ao\_file.lua](https://github.com/TheLinx/lao/blob/master/examples/ao_file.lua)   
+[examples/ao\_file.lua](https://rawgit.com/TheLinx/lao/master/examples/ao_file.lua)   
 which should generate a file *beep.wav* containing the same sine wave.
 
 
