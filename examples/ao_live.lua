@@ -1,0 +1,59 @@
+local ao = require("ao")
+
+local numeric_version = string.gsub(_VERSION, "^%D+", "")
+if tonumber(numeric_version) < 5.2 then
+  bit = require 'bit'  -- LuaBitOp http://bitop.luajit.org/api.html
+elseif _G.bit32 then
+  bit = _G.bit32
+else
+  local f = load([[
+  bit = {}
+  bit.bor    = function (a,b) return a|b  end
+  bit.band   = function (a,b) return a&b  end
+  bit.rshift = function (a,n) return a>>n end
+  ]])
+  f()
+end
+
+local schar = string.char
+
+BUF_SIZE = 4096
+freq = 440.0
+
+-- Initialize
+print("lao example script")
+--ao.initialize()
+--this is done when requiring, but can still be used if you need to restart the environment
+
+-- Setup for default driver
+default_driver = ao.defaultDriverId()
+format = {
+  bits = 16;
+  channels = 2;
+  rate = 44100;
+  byteFormat = "little";
+}
+
+-- Open driver
+device = ao.openLive(default_driver, format)
+if not device then
+  error("Error opening device.")
+end
+
+-- Play some stuff
+buf_size = format.bits/8 * format.channels * format.rate
+buffer = {}
+for i=0,format.rate do
+  sample = math.floor((0.75 * 32768 * math.sin(2 * math.pi * freq * i/format.rate)) + 0.5)
+  local a = bit.band(sample, 0xff)
+  buffer[4*i+1] = schar(a)
+  buffer[4*i+3] = schar(a)
+  local b = bit.band(bit.rshift(sample, 8), 0xff)
+  buffer[4*i+2] = schar(b)
+  buffer[4*i+4] = schar(b)
+end
+
+-- device:play(table.concat(buffer), buf_size, {})
+device:play(table.concat(buffer), buf_size)
+
+-- Close and shutdown is handled by the garbage collector!
