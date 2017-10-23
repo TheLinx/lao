@@ -34,18 +34,18 @@ to provide Lua with portable audio output.
 
 ## Summary
 
-lao is designed to stick to libao principles, but also makes sure you're
-still programming Lua. The API is very
+lao sticks to libao principles, but also makes sure you're
+still writing Lua. The API is very
 [similar to libao's,](https://xiph.org/ao/doc/libao-api.html)
 but has been simplified so you don't have to deal with a special type
-of userdata with sample formats, options, etc.
+of userdata containing sample formats, options, etc.
 To use lao, follow these steps:
 
 *   *local ao = require("ao")*
 *   Unlike in libao, *ao.initalize* is called when lao is required. But you can still call it to restart a libao environment after you've called *ao.shutdown*
-*   Call *ao.defaultDriverId* to get the ID number of the default output driver. If you want to specify a particular output driver, you may call *ao.driverId* with a string corresponding to the short name of the device (i.e. "oss", "wav", et.c.) instead
-*   If you are using the default device, no extra options are needed. However, if you wish to pass special options to the device, you will need to supply an option table to the *ao.Open* function
-*   Call *ao.openLive* and save the return value (!). That will be the device you use, and without it you can't play anything. If you want file output, call *ao.openFile* instead
+*   Call *ao.defaultDriverId* to get the ID number of the default output driver. If you want to specify a particular output driver, you may call *ao.driverId* with a string corresponding to the short name of the device (i.e. "oss", "wav", etc.) instead
+*   If you are using the default live output driver, no extra options are needed. If you want special options, you supply a table of options to the *ao.open* function
+*   *local device = ao.openLive*   The return value is the device you will use to play things. If you want file output, call *ao.openFile* instead
 *   Call *device:play* on each block of audio
 *   The following steps are optional since they're done by lao's *__gc* handlers, but you may want to do them manually for different reasons:
 *   Call *device:close* to close the device
