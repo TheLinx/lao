@@ -7,29 +7,29 @@ to provide Lua with portable audio output.
 ## API
 
 **Data Structures**   
-[device](http://rawgit.com/thelinx/lao/doc/device.html)   
-[info](http://rawgit.com/thelinx/lao/doc/info.html)   
-[options](http://rawgit.com/thelinx/lao/doc/option.html)   
-[sampleFormat](http://rawgit.com/thelinx/lao/doc/sample_format.html)   
+[device](http://rawgit.com/thelinx/lao/master/doc/device.html)   
+[info](http://rawgit.com/thelinx/lao/master/doc/info.html)   
+[options](http://rawgit.com/thelinx/lao/master/doc/option.html)   
+[sampleFormat](http://rawgit.com/thelinx/lao/master/doc/sample_format.html)   
    
 **Environment Setup/Teardown**   
-[ao.initialize](http://rawgit.com/thelinx/lao/doc/ao_initialize.html)   
-[ao.shutdown](http://rawgit.com/thelinx/lao/doc/ao_shutdown.html)   
+[ao.initialize](http://rawgit.com/thelinx/lao/master/doc/ao_initialize.html)   
+[ao.shutdown](http://rawgit.com/thelinx/lao/master/doc/ao_shutdown.html)   
    
 **Device Setup/Playback/Teardown**   
-[ao.openLive](http://rawgit.com/thelinx/lao/doc/ao_open_live.html)   
-[ao.openFile](http://rawgit.com/thelinx/lao/doc/ao_open_file.html)   
-[device:play](http://rawgit.com/thelinx/lao/doc/device_play.html)   
-[device:close](http://rawgit.com/thelinx/lao/doc/device_close.html)   
+[ao.openLive](http://rawgit.com/thelinx/lao/master/doc/ao_open_live.html)   
+[ao.openFile](http://rawgit.com/thelinx/lao/master/doc/ao_open_file.html)   
+[device:play](http://rawgit.com/thelinx/lao/master/doc/device_play.html)   
+[device:close](http://rawgit.com/thelinx/lao/master/doc/device_close.html)   
    
 **Driver Information**   
-[ao.driverId](http://rawgit.com/thelinx/lao/doc/ao_driver_id.html)   
-[ao.defaultDriverId](http://rawgit.com/thelinx/lao/doc/ao_default_driver_id.html)   
-[ao.driverInfo](http://rawgit.com/thelinx/lao/doc/ao_driver_info.html)   
-[ao.driverInfoList](http://rawgit.com/thelinx/lao/doc/ao_driver_info_list.html)   
+[ao.driverId](http://rawgit.com/thelinx/lao/master/doc/ao_driver_id.html)   
+[ao.defaultDriverId](http://rawgit.com/thelinx/lao/master/doc/ao_default_driver_id.html)   
+[ao.driverInfo](http://rawgit.com/thelinx/lao/master/doc/ao_driver_info.html)   
+[ao.driverInfoList](http://rawgit.com/thelinx/lao/master/doc/ao_driver_info_list.html)   
    
 **Miscellaneous**   
-[ao.isBigEndian](http://rawgit.com/thelinx/lao/doc/ao_is_big_endian.html)
+[ao.isBigEndian](http://rawgit.com/thelinx/lao/master/doc/ao_is_big_endian.html)
 
 ## Summary
 
