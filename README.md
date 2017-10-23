@@ -76,15 +76,6 @@ To use lao, follow these steps:
        end
        device:play(table.concat(buffer), buf_size, {})
 
-Or:
-
-       for i = 0,format.rate do    -- one second
-          sample = 0.75 * sin(2*pi*freq*i / format.rate)
-          buffer[2*i+1] = sample   -- left
-          buffer[2*i+2] = sample   -- right
-       end
-       device:play( device:array2string(buffer) )
-
 ## Installation
 
 Use LuaRocks to install the **ao** package.
