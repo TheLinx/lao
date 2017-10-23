@@ -1,6 +1,6 @@
 # lao
 
-This is a Lua module that provides bindings to
+This is a Lua module with bindings to
 [libao the Cross Platform Audio Output Library](https://xiph.org/ao/doc/libao-api.html),
 to provide Lua with portable audio output.
 
@@ -28,21 +28,20 @@ to provide Lua with portable audio output.
 [ao.driverInfo](http://thelinx.github.io/lao/ao_driver_info.html)   
 [ao.driverInfoList](http://thelinx.github.io/lao/ao_driver_info_list.html)   
    
-
 **Miscellaneous**   
 [ao.isBigEndian](http://thelinx.github.io/lao/ao_is_big_endian.html)
 
 ## Summary
 
-lao sticks to libao principles, but also makes sure you're
+lao sticks to libao principles, but makes sure you're
 still writing Lua. The API is very
 [similar to libao's,](https://xiph.org/ao/doc/libao-api.html)
-but has been simplified so you don't have to deal with a special type
-of userdata containing sample formats, options, etc.
-To use lao, follow these steps:
+but simplified so you don't have to deal with a special type
+of userdata containing the sample formats, options etc.
+Follow these steps:
 
 *   *local ao = require("ao")*
-*   Unlike in libao, *ao.initalize* is called when lao is required. But you can still call it to restart a libao environment after you've called *ao.shutdown*
+*   Unlike in libao, *ao.initalize* is called when lao is required; but you can still call it to restart a libao environment after calling *ao.shutdown*
 *   Call *ao.defaultDriverId* to get the ID number of the default output driver. If you want to specify a particular output driver, you may call *ao.driverId* with a string corresponding to the short name of the device (i.e. "oss", "wav", etc.) instead
 *   If you are using the default live output driver, no extra options are needed. If you want special options, you supply a table of options to the *ao.open* function
 *   *local device = ao.openLive*   The return value is the device you will use to play things. If you want file output, call *ao.openFile* instead
