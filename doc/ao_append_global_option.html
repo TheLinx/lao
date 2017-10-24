@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>lao - function - ao.driverId</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+  <span class="tiny">
+    <p class="fl">lao documentation</p>
+    <p class="fr">lao version 1.1.0 - 20170904</p>
+    <br class="cb" />
+  </span>
+  <h1 class="cb">ao.appendGlobalOption</h1>
+  <p>
+    Append a key-value pair to the internal linked list of global options.
+    <br>
+	These options are normally set in
+   <a href="file:///etc/libao.conf">/etc/libao.conf</a>
+	or on ~/libao
+    but you may need to over-ride those choices at run-time.
+  </p>
+  <pre class="declare"><i>boolean</i> rv = ao.appendGlobalOption(<i>string</i> key, <i>string</I> value)</pre>
+  <h2>Parameters</h2>
+  <ul class="vars">
+    <li>key<ul>
+      <li>
+        A string holding the option key.
+        This can be "default_driver", "quiet",
+        "debug" or "verbose".
+        See the <i>AO Options</i> in
+        <a href="https://xiph.org/ao/doc/config.html">
+        xiph.org/ao/doc/config.html</a>
+      </li></ul>
+    </li><li>value<ul>
+      <li>
+        A string holding the option value.
+        For <i>default_driver</i>, this will be one of the
+        drivers returned by 
+        <a href="ao_driver_info_list.html">driverInfoList()</a>
+        and for the other options it should be either <i>yes</i> or <i>no</i>
+      </li>
+    </ul></li>
+  </ul>
+  <h2>Return Value</h2>
+  <p>
+    Returns success or failure.
+  </p>
+  <hr />
+  <span class="tiny">
+    <p class="fl">developed by
+    <a href="https://github.com/thelinx">Linus Sj&ouml;gren</a>,
+    <a href="https://github.com/daurnimator">daurnimator</a> and
+    <a href="https://github.com/peterbillam">peterbillam</a>
+    </p>
+    <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
+    <br class="cb" />
+    <p class="fl"><a href="./index.html">back to index</a></p>
+    <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+    <br class="cb" />
+  </span>
+</body>
+</html>

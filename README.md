@@ -15,6 +15,7 @@ to provide Lua with portable audio output.
 **Environment Setup/Teardown**   
 [ao.initialize](http://rawgit.com/thelinx/lao/master/doc/ao_initialize.html)   
 [ao.shutdown](http://rawgit.com/thelinx/lao/master/doc/ao_shutdown.html)   
+[ao.appendGlobalOption](http://rawgit.com/thelinx/lao/master/doc/ao_append_global_option.html)   
    
 **Device Setup/Playback/Teardown**   
 [ao.openLive](http://rawgit.com/thelinx/lao/master/doc/ao_open_live.html)   
