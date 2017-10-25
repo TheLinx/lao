@@ -12,6 +12,14 @@
   <h1 class="cb">device:play</h1>
   <p>
     Play a block of audio data to a device.
+  </p><p>
+    The output is synchronous: <i>play()</I> does not return until
+    all the data has been output.<br>
+    This is because several of the output devices supported by <i>libao</I>
+    do not offer asynchronous output.<br>
+    It means <b>ao</b> is not very suitable for real-time work
+    such as synthesisers, electronic keyboards etc.
+    <br>&nbsp;
   </p>
   <pre class="declare"><i>boolean</i> success = device:play(<i>string</i> buffer, <i>number</i> bufferSize)</pre>
   <h2>Parameters</h2>

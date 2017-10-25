@@ -2,7 +2,7 @@ body {
   color: #000;
   background-color: #FFF;
   margin: 0 10px;
-  font-size: 12pt;
+  font-size: 14pt;
   font-family: helvetica, sans-serif;
 }
 
@@ -11,7 +11,7 @@ h1 {
   margin-top: 5px;
 }
 h2 {
-  font-size: 16pt;
+  font-size: 18pt;
 }
 
 a {
@@ -52,7 +52,7 @@ hr {
 }
 
 pre, tt, .tt {
-  font-size: 10pt;
+  font-size: 14pt;
   font-family: monospace;
 }
 
@@ -63,7 +63,7 @@ pre.declare {
 }
 
 .tiny {
-  font-size: 8pt;
+  font-size: 12pt;
 }
 .r {
   color: red;

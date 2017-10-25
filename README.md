@@ -42,7 +42,7 @@ of userdata containing the sample formats, options etc.
 Follow these steps:
 
 *   *local ao = require("ao")*
-*   Unlike in libao, *ao.initalize* is called when lao is required; but you can still call it to restart a libao environment after calling *ao.shutdown*
+*   Unlike in libao, *ao.initalize* is called automatically; but you can still call it by hand to restart libao if you've  called *ao.shutdown*
 *   Call *ao.defaultDriverId* to get the ID number of the default output driver. If you want to specify a particular output driver, you may call *ao.driverId* with a string corresponding to the short name of the device (i.e. "oss", "wav", etc.) instead
 *   If you are using the default live output driver, no extra options are needed. If you want special options, you supply a table of options to the *ao.open* function
 *   *local device = ao.openLive*   The return value is the device you will use to play things. If you want file output, call *ao.openFile* instead
@@ -53,25 +53,25 @@ Follow these steps:
 
 ## Example
 
-       local ao = require( "ao" )
-       local schar = string.char
-       local sin = math.sin ; local pi = math.pi ; local floor = math.floor
-       local default_driver = ao.defaultDriverId()
+       ao = require( "ao" )
+       schar = string.char
+       sin = math.sin ; pi = math.pi ; floor = math.floor
+       -- Open the default live driver
+       default_driver = ao.defaultDriverId()
        format = { bits=16; channels=2; rate=44100; byteFormat="little"; }
-       -- Open the driver
        device = assert( ao.openLive(default_driver, format) )
        -- Play a one-second beep
        buf_size = format.channels * format.rate * format.bits/8
-       local freq = 440.0
+       freq = 440.0
        buffer = {}
        for i = 0,format.rate do    -- one second
-          sample = floor((0.75 * 32768 * sin(2*pi*freq*i/format.rate)) + 0.5)
-          local a = bit.band(sample, 0xff)
-          buffer[4*i+1] = schar(a)
-          buffer[4*i+3] = schar(a)
-          local b = bit.band(bit.rshift(sample, 8), 0xff)
-          buffer[4*i+2] = schar(b)
-          buffer[4*i+4] = schar(b)
+          local sample = floor((.75 * 32768*sin(2*pi*freq*i/format.rate))+.5)
+          local lsb = bit.band(sample, 0xff)
+          buffer[4*i+1] = schar(lsb)  -- left
+          buffer[4*i+3] = schar(lsb)  -- right
+          local msb = bit.band(bit.rshift(sample, 8), 0xff)
+          buffer[4*i+2] = schar(msb)  -- left
+          buffer[4*i+4] = schar(msb)  -- right
        end
        device:play(table.concat(buffer), buf_size)
 
