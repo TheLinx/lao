@@ -2,16 +2,16 @@ body {
   color: #000;
   background-color: #FFF;
   margin: 0 10px;
-  font-size: 14pt;
+  font-size: 13pt;
   font-family: helvetica, sans-serif;
 }
 
 h1 {
-  font-size: 26pt;
+  font-size: 24pt;
   margin-top: 5px;
 }
 h2 {
-  font-size: 18pt;
+  font-size: 16pt;
 }
 
 a {
@@ -52,12 +52,12 @@ hr {
 }
 
 pre, tt, .tt {
-  font-size: 14pt;
+  font-size: 13pt;
   font-family: monospace;
 }
 
 pre.declare {
-  background-color: #CCC;
+  background-color: #EEE;
   padding: 4px;
   font-weight: bold;
 }
