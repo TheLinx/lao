@@ -20,10 +20,10 @@ local floor = math.floor
 local sin   = math.sin
 local pi    = math.pi
 
--- ao.initialize()   is done automatically when requiring,
--- but can still be used if you need to restart the environment
+-- ao.initialize()   is done automatically;
+-- you will only need it if you have to restart the environment
 
--- Setup for default driver
+-- Setup the driver
 local driverid = ao.driverId("wav")
 local format = {
   bits = 16;
@@ -34,14 +34,12 @@ local format = {
 
 -- Open the driver
 local device = ao.openFile(driverid, "beep.wav", false, format)
-if not device then
-  error("Error opening device.")
-end
+if not device then error("Error opening device.") end
 
 -- Play a one second sine-wave
 local freq  = 440.0
 local buf_size = format.bits/8 * format.channels * format.rate
-buffer = {}
+local buffer = {}
 for i = 0,format.rate do
   local sample = floor((.75 * 32768 * sin(2*pi*freq*i/format.rate)) + .5)
   local lsb = bit.band(sample, 0xff)
@@ -53,6 +51,6 @@ for i = 0,format.rate do
 end
 
 device:play(table.concat(buffer), buf_size)
-print("ao_example2.lua lao script - see beep.wav")
+print("ao_file.lua - see beep.wav")
 
 -- Close and shutdown is handled by the garbage collector :-)

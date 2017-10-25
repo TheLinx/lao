@@ -16,44 +16,40 @@ else
 end
 
 local schar = string.char
+local floor = math.floor
+local sin   = math.sin
+local pi    = math.pi
 
-BUF_SIZE = 4096
-freq = 440.0
+-- ao.initialize()   is done automatically;
+-- you will only need it if you have to restart the environment
 
--- Initialize
-print("lao example script")
---ao.initialize()
---this is done when requiring, but can still be used if you need to restart the environment
-
--- Setup for default driver
-default_driver = ao.defaultDriverId()
-format = {
+-- Setup the default live driver
+local default_driver = ao.defaultDriverId()
+local format = {
   bits = 16;
   channels = 2;
   rate = 44100;
   byteFormat = "little";
 }
 
--- Open driver
-device = ao.openLive(default_driver, format)
-if not device then
-  error("Error opening device.")
-end
+-- Open the driver
+local device = ao.openLive(default_driver, format)
+if not device then error("Error opening device.") end
 
--- Play some stuff
-buf_size = format.bits/8 * format.channels * format.rate
-buffer = {}
+-- Play a one second sine-wave
+local freq = 440.0
+local buf_size = format.bits/8 * format.channels * format.rate
+local buffer = {}
 for i=0,format.rate do
-  sample = math.floor((0.75 * 32768 * math.sin(2 * math.pi * freq * i/format.rate)) + 0.5)
-  local a = bit.band(sample, 0xff)
-  buffer[4*i+1] = schar(a)
-  buffer[4*i+3] = schar(a)
-  local b = bit.band(bit.rshift(sample, 8), 0xff)
-  buffer[4*i+2] = schar(b)
-  buffer[4*i+4] = schar(b)
+  local sample = floor((.75 * 32768 * sin(2*pi*freq*i/format.rate)) + .5)
+  local lsb = bit.band(sample, 0xff)
+  buffer[4*i+1] = schar(lsb)
+  buffer[4*i+3] = schar(lsb)
+  local msb = bit.band(bit.rshift(sample, 8), 0xff)
+  buffer[4*i+2] = schar(msb)
+  buffer[4*i+4] = schar(msb)
 end
 
--- device:play(table.concat(buffer), buf_size, {})
 device:play(table.concat(buffer), buf_size)
 
 -- Close and shutdown is handled by the garbage collector!
