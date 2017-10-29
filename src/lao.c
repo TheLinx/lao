@@ -358,6 +358,50 @@ static int l_append_global_option(lua_State *L)
 	return 1;
 }
 
+static int l_array2string(lua_State *L)
+{
+/*  I would like to get bits from the device, but ...
+	ao_device *dev = *((ao_device **) luaL_checkudata(L, 1, "ao.device"));
+	if (dev == NULL) { fprintf(stderr, "device was NULL\n"); }
+	fprintf(stderr, "bits = %d\n", dev->bits);  ALAS:
+	ao_device is opaque https://xiph.org/ao/doc/ao_device.html
+	SO: I could remember the values, or demand an extra arg: options
+*/
+	luaL_checktype(L, 1, LUA_TTABLE);  /* an array of floats -1...+1 */
+	int buf_size = luaL_len(L, 1);                /* PiL p.282 */
+	int debug = 0;
+	if (debug) fprintf(stderr, "buf_size = %d\n", buf_size);
+	luaL_Buffer buf_str;         /* PiL p.285 */
+	luaL_buffinit(L, &buf_str);  /* PiL p.286 */
+	int i;
+	float  sample_flt;
+	signed sample_int;     /* assumes 16 bits */
+	for (i = 1; i < buf_size; i += 1)
+	{
+	/* if (i > (1500)) debug = 1; */
+	if (debug) fprintf(stderr, "i = %d   gettop = %d\n", i,lua_gettop(L));
+		lua_rawgeti(L, 1, i);
+		sample_flt  = lua_tonumber(L, -1);
+		lua_pop(L,1);
+		if (debug)
+			fprintf(stderr," after  sample_lft  gettop = %d\n",lua_gettop(L));
+		if        (sample_flt  >  1.0) { sample_flt  =  1.0;
+		} else if (sample_flt  < -1.0) { sample_flt  = -1.0;
+		}
+		sample_int  = (int) (sample_flt *32766 + 0.5); /* assumes 16 bits */
+		if (debug) fprintf(stderr, "sample_int = %d\n", sample_int);
+		/* is this efficient, or does it find the length every time ? */
+		luaL_addchar (&buf_str, (char)  sample_int      & 0xff);  /* lsb */
+		if (debug) fprintf(stderr," lsb luaL_addchar(%d)\n", sample_int&0xff);
+		luaL_addchar (&buf_str, (char) (sample_int>>8)  & 0xff);  /* msb */
+		if (debug)
+			fprintf(stderr," msb luaL_addchar(%d)\n",(sample_int>>8)&0xff);
+	}
+	if (debug) fprintf(stderr, " about to luaL_pushresult\n");
+	luaL_pushresult(&buf_str);  /* PiL p.286 */
+	return 1;
+}
+
 /* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
 	{"initialize", l_initialize},
@@ -372,6 +416,7 @@ static const luaL_Reg ao [] = {
 	{"fileExtension", l_file_extension},
 	{"isBigEndian", l_is_big_endian},
 	{"appendGlobalOption", l_append_global_option},
+	{"array2string", l_array2string},
 	{NULL, NULL}
 };
 
@@ -386,6 +431,8 @@ int luaopen_ao(lua_State* L)
 	lua_setfield(L, -2, "close");
 	lua_pushcfunction(L, l_play);
 	lua_setfield(L, -2, "play");
+	lua_pushcfunction(L, l_array2string);
+	lua_setfield(L, -2, "array2string");
 #if LUA_VERSION_NUM >= 502
 	luaL_newlib(L, ao);    /* 5.2 */
 #else
