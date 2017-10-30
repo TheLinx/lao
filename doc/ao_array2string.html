@@ -1,0 +1,75 @@
+<html>
+<head>
+<title>lao - function - ao.array2string</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+  <span class="tiny">
+    <p class="fl">lao documentation</p>
+    <p class="fr">lao version 1.1.0 - 20170904</p>
+    <br class="cb" />
+  </span>
+  <h1 class="cb">ao.array2string</h1>
+  <p>
+    Converts a lua array of numbers (-1 .. +1) to a string
+	of bytes representing 16-bit integers that can be fed to
+    <a href="device_play.html">device:play</a><br/>
+    It also returns a second value, the <i>buf_size</i> number
+    that <a href="device_play.html">device:play</a> will need.
+  </p><p>
+    Currently it is restricted to the common case of 16-bit devices,
+    with <I>byteFormat</i> = 'little'.
+  </p><p>
+    If there is more than one channel, for example two,
+    then the array should contain the channel samples
+    in the order
+    <pre>{ sample1_left, sample1_right, sample2_left, sample2_right, sample3_left . . . }</pre>
+  </p>
+  <pre class="declare"><i>string</I> buf, <i>integer</i> buf_size = ao.array2string( { <i>numbers</I> samples } )</pre>
+  <h2>Notes</h2>
+  <p>
+  <i>array2string</i> replaces the not-very-elegant piece of lua code
+  which involved not-very-portable bit operations<br />
+  to put together an array of bytes,
+  and then <i>concat</i> the array into the string which
+  <a href="device_play.html">device:play</a> will need.<br />
+  See <a href="../examples/ao_example.lua">ao_example.lua</a>
+  </p>
+  <pre>  buf_size = format.bits/8 * format.channels * format.rate
+  buffer = {}
+  for i = 0,format.rate do    -- one second
+    sample = math.floor((0.75 * 32768 * math.sin(2 * math.pi * freq * i/format.rate)) + 0.5)
+    local a = bit.band(sample, 0xff)
+    buffer[4*i+1] = string.schar(a)   --  left lsb
+    buffer[4*i+3] = string.schar(a)   -- right lsb
+    local b = bit.band(bit.rshift(sample, 8), 0xff)
+    buffer[4*i+2] = string.schar(b)   --  left msb
+    buffer[4*i+4] = string.schar(b)   -- right msb
+  end
+  buf_str = table.concat(buffer)
+  device:play(buf_str, buf_size)</pre>
+  <p>
+  <i>array2string</i> now simplifies this to:
+  </p><pre>  local buffer = {}
+  for i = 0,format.rate do    -- one second
+    sample = 0.75 * math.sin(2*math.pi*freq*i / format.rate)
+    buffer[2*i+1] = sample   -- left
+    buffer[2*i+2] = sample   -- right
+  end
+  device:play( ao.array2string(buffer) )</pre>
+  <hr />
+  <span class="tiny">
+    <p class="fl">developed by
+    <a href="https://github.com/thelinx">Linus Sj&ouml;gren</a>,
+    <a href="https://github.com/daurnimator">daurnimator</a> and
+    <a href="https://github.com/peterbillam">peterbillam</a>
+    </p>
+    <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
+    <br class="cb" />
+    <p class="fl"><a href="./index.html">back to index</a></p>
+    <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+    <br class="cb" />
+  </span>
+</body>
+</html>
+
