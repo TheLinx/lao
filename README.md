@@ -30,7 +30,8 @@ to provide Lua with portable audio output.
 [ao.driverInfoList](http://rawgit.com/thelinx/lao/master/doc/ao_driver_info_list.html)   
    
 **Miscellaneous**   
-[ao.isBigEndian](http://rawgit.com/thelinx/lao/master/doc/ao_is_big_endian.html)
+[ao.isBigEndian](http://rawgit.com/thelinx/lao/master/doc/ao_is_big_endian.html)   
+[ao.array2string](http://rawgit.com/thelinx/lao/master/doc/ao_array2string.html)
 
 ## Summary
 
@@ -54,26 +55,19 @@ Follow these steps:
 ## Example
 
        ao = require( "ao" )
-       schar = string.char
-       sin = math.sin ; pi = math.pi ; floor = math.floor
        -- Open the default live driver
        default_driver = ao.defaultDriverId()
        format = { bits=16; channels=2; rate=44100; byteFormat="little"; }
        device = assert( ao.openLive(default_driver, format) )
        -- Play a one-second beep
-       buf_size = format.channels * format.rate * format.bits/8
        freq = 440.0
        buffer = {}
        for i = 0,format.rate do    -- one second
-          local sample = floor((.75 * 32768*sin(2*pi*freq*i/format.rate))+.5)
-          local lsb = bit.band(sample, 0xff)
-          buffer[4*i+1] = schar(lsb)  -- left
-          buffer[4*i+3] = schar(lsb)  -- right
-          local msb = bit.band(bit.rshift(sample, 8), 0xff)
-          buffer[4*i+2] = schar(msb)  -- left
-          buffer[4*i+4] = schar(msb)  -- right
-       end
-       device:play(table.concat(buffer), buf_size)
+          sample = 0.75 * math.sin(2*math.pi*freq*i / format.rate)
+          buffer[2*i+1] = sample   -- left
+          buffer[2*i+2] = sample   -- right
+        end
+        device:play( ao.array2string(buffer) )
 
 ## Installation
 
