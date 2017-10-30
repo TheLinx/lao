@@ -22,8 +22,8 @@
   </p><p>
     If there is more than one channel, for example two,
     then the array should contain the channel samples
-    in the order
-    <pre>{ sample1_left, sample1_right, sample2_left, sample2_right, sample3_left . . . }</pre>
+    in the order<br/>
+    <code> &nbsp; { sample1_left, sample1_right, sample2_left, sample2_right, sample3_left . . . }</code>
   </p>
   <pre class="declare"><i>string</I> buf, <i>integer</i> buf_size = ao.array2string( { <i>numbers</I> samples } )</pre>
   <h2>Notes</h2>
@@ -32,8 +32,8 @@
   involving not-very-portable bit operations<br />
   to put together an array of bytes,
   and then <i>concat</i> the array into the string which
-  <a href="device_play.html">device:play</a> will need.<br />
-  See <a href="../examples/ao_example.lua">ao_example.lua</a>
+  <a href="device_play.html">device:play</a> will need.
+  <!--<br /> See <a href="../examples/ao_example.lua">ao_example.lua</a> -->
   </p>
   <pre>  local buf_size = format.bits/8 * format.channels * format.rate
   local buffer = {}
@@ -54,7 +54,7 @@
   which also runs about four times faster :
   </p><pre>  local buffer = {}
   for i = 0,format.rate do    -- one second
-    sample = 0.75 * math.sin(2*math.pi*freq*i / format.rate)
+    local sample = 0.75 * math.sin(2*math.pi*freq*i / format.rate)
     buffer[2*i+1] = sample   -- left
     buffer[2*i+2] = sample   -- right
   end
