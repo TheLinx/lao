@@ -29,27 +29,29 @@
   <h2>Notes</h2>
   <p>
   <i>array2string</i> replaces the not-very-elegant piece of lua code
-  which involved not-very-portable bit operations<br />
+  involving not-very-portable bit operations<br />
   to put together an array of bytes,
   and then <i>concat</i> the array into the string which
   <a href="device_play.html">device:play</a> will need.<br />
   See <a href="../examples/ao_example.lua">ao_example.lua</a>
   </p>
-  <pre>  buf_size = format.bits/8 * format.channels * format.rate
-  buffer = {}
+  <pre>  local buf_size = format.bits/8 * format.channels * format.rate
+  local buffer = {}
   for i = 0,format.rate do    -- one second
-    sample = math.floor((0.75 * 32768 * math.sin(2 * math.pi * freq * i/format.rate)) + 0.5)
-    local a = bit.band(sample, 0xff)
-    buffer[4*i+1] = string.schar(a)   --  left lsb
-    buffer[4*i+3] = string.schar(a)   -- right lsb
-    local b = bit.band(bit.rshift(sample, 8), 0xff)
-    buffer[4*i+2] = string.schar(b)   --  left msb
-    buffer[4*i+4] = string.schar(b)   -- right msb
+    local sample = math.floor((0.75 * 32768
+      * math.sin(2 * math.pi * freq * i/format.rate)) + 0.5)
+    local lsb = bit.band(sample, 0xff)
+    local msb = bit.band(bit.rshift(sample, 8), 0xff)
+    buffer[4*i+1] = string.char(lsb)   --  left lsb
+    buffer[4*i+2] = string.char(msb)   --  left msb
+    buffer[4*i+3] = string.char(lsb)   -- right lsb
+    buffer[4*i+4] = string.char(msb)   -- right msb
   end
-  buf_str = table.concat(buffer)
+  local buf_str = table.concat(buffer)
   device:play(buf_str, buf_size)</pre>
   <p>
-  <i>array2string</i> now simplifies this to:
+  <i>array2string</i> simplifies that to the following,
+  which also runs about four times faster :
   </p><pre>  local buffer = {}
   for i = 0,format.rate do    -- one second
     sample = 0.75 * math.sin(2*math.pi*freq*i / format.rate)

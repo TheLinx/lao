@@ -30,13 +30,17 @@
     <li>bufferSize<ul>
       <li>Number of bytes of audio data in the buffer string.</li>
     </ul></li>
+    <p>
+    These two parameters are those returned by
+    <a href="ao_array2string.html">ao.array2string</a>.
+    </p>
   </ul>
   <h2>Return Values</h2>
   <ul class="vars">
     <li>success<ul>
       <li>
         If the playback fails for some reason, the function will return
-        false. The device should be closed.
+        <i>false</i>. The device should then be closed.
       </li>
     </ul></li>
   </ul>
