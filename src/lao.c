@@ -396,7 +396,7 @@ static int l_array2string(lua_State *L)
 		if (lua_isstring(L, -1)) { byteOrder = lua_tostring(L,-1); }
 		lua_pop(L, 1);
 		lua_pushstring(L, "numberType");
-		lua_gettable(L, 2);    /* PiL p. 164 */
+		lua_gettable(L, 2);     /* PiL p. 164 */
 		if (lua_isstring(L, -1)) { numberType = lua_tostring(L,-1); }
 		if (debug) fprintf(stderr, "numberType = %s\n", numberType);
 		lua_pop(L, 1);
