@@ -370,6 +370,8 @@ static int l_array2string(lua_State *L)
 	if (dev == NULL) { fprintf(stderr, "device was NULL\n"); }
 	fprintf(stderr, "bits = %d\n", dev->bits);  ALAS:
 	ao_device is opaque https://xiph.org/ao/doc/ao_device.html
+	and I can't just remember it because there might be several different
+	open devices :-(
 	SO: I accept an extra table arg: sampleformat
 */
 	int debug = 0;
@@ -377,27 +379,31 @@ static int l_array2string(lua_State *L)
 	int buf_size = luaL_len(L, 1); /* PiL p.282 */
 	if (debug) fprintf(stderr, "buf_size = %d\n", buf_size);
 	int bits = 16;
-	const char* byteOrder    = "little";  /*  "little", "big" or "native" */
-	const char* sampleFormat = "float";
+	const char* byteOrder  = "little";  /* "little", "big" or "native" */
+	const char* numberType = "float";   /* "float", "unsigned" or "signed" */
 	if (lua_type(L, 2) == LUA_TTABLE) {
+/* I could get the first two from driverInfo(driverId))
+   if I remember the latest driverId from the latest openFile of openLive ... 
+   In that case the numberType could be just a string, not part of a table
+*/
 		if (debug) fprintf(stderr, "2nd arg was a table\n");
 		lua_pushstring(L, "bits");
 		lua_gettable(L, 2);    /* PiL p. 164 */
 		if (lua_isnumber(L, -1)) { bits = lua_tointeger(L, -1); }
 		lua_pop(L, 1);
-		lua_pushstring(L, "byteOrder");
+		lua_pushstring(L, "byteOrder"); /* if "native", use isBigEndian() */
 		lua_gettable(L, 2);    /* PiL p. 164 */
 		if (lua_isstring(L, -1)) { byteOrder = lua_tostring(L,-1); }
 		lua_pop(L, 1);
-		lua_pushstring(L, "sampleFormat");
+		lua_pushstring(L, "numberType");
 		lua_gettable(L, 2);    /* PiL p. 164 */
-		if (lua_isstring(L, -1)) { sampleFormat = lua_tostring(L,-1); }
-		if (debug) fprintf(stderr, "sampleFormat = %s\n", sampleFormat);
+		if (lua_isstring(L, -1)) { numberType = lua_tostring(L,-1); }
+		if (debug) fprintf(stderr, "numberType = %s\n", numberType);
 		lua_pop(L, 1);
 	}
 	if (debug) fprintf(stderr, "bits = %d\n", bits);
 	if (debug) fprintf(stderr, "byteOrder = %s\n", byteOrder);
-	if (debug) fprintf(stderr, "sampleFormat = %s\n", sampleFormat);
+	if (debug) fprintf(stderr, "numberType = %s\n", numberType);
 	luaL_Buffer buf_str;           /* PiL p.285 */
 	luaL_buffinit(L, &buf_str);    /* PiL p.286 */
 	int i;
@@ -405,11 +411,11 @@ static int l_array2string(lua_State *L)
 	for (i = 1; i <= buf_size; i += 1)
 	{
 		lua_rawgeti(L, 1, i);
-		if        (sampleFormat[0] == 's') {     /* signed */
-			sample_int = lua_tonumber(L, -1);
-		} else if (sampleFormat[0] == 'u') {   /* unsigned */
+		if        (numberType[0] == 's') {     /* signed */
+			sample_int = lua_tonumber(L, -1);  /* should clip */
+		} else if (numberType[0] == 'u') {   /* unsigned */
 			sample_int = lua_tonumber(L, -1) - 32768;   /* assumes 16 bits */
-		} else {                     /* float -1.0 .. +1.0 */
+		} else {                   /* float -1.0 .. +1.0 */
 			float sample_flt = lua_tonumber(L, -1);
 			if        (sample_flt  >  1.0) { sample_flt =  1.0;
 			} else if (sample_flt  < -1.0) { sample_flt = -1.0;
