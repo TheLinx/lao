@@ -6,6 +6,11 @@
 #include "lauxlib.h"
 #include "ao/ao.h"
 
+int my_round(double number)
+{
+	return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
+}
+
 /* -- Library Setup/Teardown -- */
 static int has_initialized = 0;
 static int l_initialize(lua_State* L)
@@ -387,7 +392,8 @@ static int l_array2string(lua_State *L)
 		if        (sample_flt  >  1.0) { sample_flt =  1.0;
 		} else if (sample_flt  < -1.0) { sample_flt = -1.0;
 		}
-		sample_int  = (int) (sample_flt *32766 + 0.5); /* assumes 16 bits */
+		/* sample_int  = (int) (sample_flt*32766 + 0.5);  assumes 16 bits */
+		sample_int  = my_round(sample_flt * 32766); /* assumes 16 bits */
 		if (debug) fprintf(stderr, "sample_int = %d\n", sample_int);
 		luaL_addchar (&buf_str, (char)  sample_int      & 0xff);  /* lsb */
 		if (debug) fprintf(stderr," lsb luaL_addchar(%d)\n", sample_int&0xff);
