@@ -44,8 +44,7 @@
         It can be either "little", "big" or "native".
         The default is "litte".<br>
         It should be the same as the <i>byteFormat</i> field in the device you
-        want to play to.<br/>
-        In version 1.2 the <i>byteFormat</i> field is not yet implemented.
+        want to play to.
       </li>
     </ul></li>
     <li>numberType<ul>
@@ -76,7 +75,7 @@
   involving not-very-portable bit operations<br />
   to put together an table of bytes
   then <i>concat</i> the table into the byte-string,<br/>
-  and which also runs about four times slower than <i>array2string</i> :
+  and which also runs nearly four times slower than <i>array2string</i> :
   <!--<br /> See <a href="../examples/ao_example.lua">ao_example.lua</a> -->
   </p>
   <pre>  local buf_size = format.bits/8 * format.channels * format.rate
