@@ -365,24 +365,22 @@ static int l_append_global_option(lua_State *L)
 
 static int l_array2string(lua_State *L)
 {
-/*  I would like to get bits from the device, but ...
-	ao_device is opaque https://xiph.org/ao/doc/ao_device.html
-	and I can't just remember it because there might be several different
-	open devices :-( SO: I accept an extra table arg
-*/
-	int debug = 0;
+	/*  I would like to get bits from the device, but ...
+		ao_device is opaque https://xiph.org/ao/doc/ao_device.html
+		and I can't just remember it because there might be several
+		different open devices :-( SO: I accept an extra table arg
+	*/
 	luaL_checktype(L, 1, LUA_TTABLE);  /* an array of floats -1...+1 */
 	int buf_size = luaL_len(L, 1); /* PiL p.282 */
-	if (debug) fprintf(stderr, "buf_size = %d\n", buf_size);
 	int bits = 16;
 	const char* byteFormat = "little";  /* "little", "big" or "native" */
 	const char* numberType = "float";   /* "float", "unsigned" or "signed" */
 	if (lua_type(L, 2) == LUA_TTABLE) {
-		if (debug) fprintf(stderr, "2nd arg was a table\n");
 		lua_pushstring(L, "bits");
 		lua_gettable(L, 2);    /* PiL p. 164 */
 		if (lua_isnumber(L, -1)) { bits = lua_tointeger(L, -1); }
 		lua_pop(L, 1);
+		bits = bits + 1;  /* avoid unused-variable warning :-( */
 		lua_pushstring(L, "byteFormat"); /* if "native", use isBigEndian() */
 		lua_gettable(L, 2);    /* PiL p. 164 */
 		if (lua_isstring(L, -1)) { byteFormat = lua_tostring(L,-1); }
@@ -393,21 +391,16 @@ static int l_array2string(lua_State *L)
 		lua_pushstring(L, "numberType");
 		lua_gettable(L, 2);     /* PiL p. 164 */
 		if (lua_isstring(L, -1)) { numberType = lua_tostring(L,-1); }
-		if (debug) fprintf(stderr, "numberType = %s\n", numberType);
 		lua_pop(L, 1);
 	}
-	if (debug) fprintf(stderr, "bits = %d\n", bits);
-	if (debug) fprintf(stderr, "byteFormat = %s\n", byteFormat);
-	if (debug) fprintf(stderr, "numberType = %s\n", numberType);
-	debug = 0;
 	luaL_Buffer buf_str;           /* PiL p.285 */
 	luaL_buffinit(L, &buf_str);    /* PiL p.286 */
 	int i;
-	signed sample_int;       /* assumes 16 bits */
+	signed sample_int;
 	for (i = 1; i <= buf_size; i += 1)
 	{
 		lua_rawgeti(L, 1, i);
-		if        (numberType[0] == 's') {   /* signed */
+		if        (numberType[0] == 's') {     /* signed */
 			sample_int = lua_tonumber(L, -1);
 		} else if (numberType[0] == 'u') {   /* unsigned */
 			sample_int = lua_tonumber(L, -1) - 32768;  /* assumes 16 bits */
@@ -419,7 +412,6 @@ static int l_array2string(lua_State *L)
 		if        (sample_int  >  32767) { sample_int =  32767;
 		} else if (sample_int  < -32767) { sample_int = -32767;
 		}
-		if (debug) fprintf(stderr, "sample_int = %d\n", sample_int);
 		if (byteFormat[0]=='b') {
 			luaL_addchar(&buf_str, (char) (sample_int>>8 & 0xff)); /* msb */
 			luaL_addchar(&buf_str, (char)  sample_int    & 0xff);  /* lsb */

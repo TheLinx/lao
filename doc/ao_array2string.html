@@ -16,8 +16,7 @@
     It also returns a second value, the <i>buf_size</i> number
     that <a href="device_play.html">device:play</a> will need.
   </p><p>
-    Currently it is restricted to the common case of 16-bit devices,
-    with <I>byteFormat</i> = 'little'.
+    Currently it is restricted to the common case of 16-bit devices.
   </p><p>
     If there is more than one channel, for example two,
     then the array should contain the channel samples
@@ -33,9 +32,10 @@
       <li>
         a number that defines the bits per sample.
         The default is 16.<br>
-        It should be the same as the <i>bits</i> field in the device you
-        want to play to.<br/>
-        In version 1.2 the <i>bits</i> field is not yet implemented.
+        It should be the same as the <i>bits</i>
+        <a href="sample_format.html">field</a>
+        in the device you want to play to.
+        <br/>In version 1.2 the <i>bits</i> field is not yet implemented.
       </li>
     </ul></li>
     <li>byteFormat<ul>
@@ -43,8 +43,9 @@
         a string that defines what byte ordering is used.
         It can be either "little", "big" or "native".
         The default is "litte".<br>
-        It should be the same as the <i>byteFormat</i> field in the device you
-        want to play to.
+        It should be the same as the <i>byteFormat</i>
+        <a href="sample_format.html">field</a>
+        in the device you want to play to.
       </li>
     </ul></li>
     <li>numberType<ul>
