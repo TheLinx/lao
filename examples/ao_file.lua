@@ -1,56 +1,25 @@
 local ao = require("ao")
 
-local numeric_version = string.gsub(_VERSION, "^%D+", "")
-if tonumber(numeric_version) < 5.2 then
-  bit = require 'bit'  -- LuaBitOp http://bitop.luajit.org/api.html
-elseif _G.bit32 then
-  bit = _G.bit32
-else
-  local f = load([[
-  bit = {}
-  bit.bor    = function (a,b) return a|b  end
-  bit.band   = function (a,b) return a&b  end
-  bit.rshift = function (a,n) return a>>n end
-  ]])
-  f()
-end
-
-local schar = string.char
-local floor = math.floor
-local sin   = math.sin
-local pi    = math.pi
-
--- ao.initialize()   is done automatically;
+-- ao.initialize()   is done automatically :-)
 -- you will only need it if you have to restart the environment
 
--- Setup the driver
-local driverid = ao.driverId("wav")
-local format = {
-  bits = 16;
-  channels = 2;
-  rate = 44100;
-  byteFormat = "little";
-}
+-- Setup the default live driver
+local wav_driver = ao.driverId("wav")
+local format = { bits=16; channels=2; rate=44100; byteFormat="little"; }
 
 -- Open the driver
-local device = ao.openFile(driverid, "beep.wav", false, format)
+local device = ao.openFile(wav_driver, "beep.wav", false, format)
 if not device then error("Error opening device.") end
 
 -- Play a one second sine-wave
-local freq  = 440.0
+local freq = 440.0
 local buf_size = format.bits/8 * format.channels * format.rate
 local buffer = {}
-for i = 0,format.rate do
-  local sample = floor((.75 * 32768 * sin(2*pi*freq*i/format.rate)) + .5)
-  local lsb = bit.band(sample, 0xff)
-  buffer[4*i+1] = schar(lsb)
-  buffer[4*i+3] = schar(lsb)
-  local msb = bit.band(bit.rshift(sample, 8), 0xff)
-  buffer[4*i+2] = schar(msb)
-  buffer[4*i+4] = schar(msb)
+for i = 0,format.rate do    -- one second
+   sample = 0.75 * math.sin(2*math.pi*freq*i / format.rate)
+   buffer[2*i+1] = sample   -- left
+   buffer[2*i+2] = sample   -- right
 end
-
-device:play(table.concat(buffer), buf_size)
-print("ao_file.lua - see beep.wav")
+device:play( ao.array2string(buffer) )   -- assumes 16 bits ...
 
 -- Close and shutdown is handled by the garbage collector :-)

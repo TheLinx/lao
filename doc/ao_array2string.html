@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>lao - function - ao.array2string</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+  <span class="tiny">
+    <p class="fl">lao documentation</p>
+    <p class="fr">lao version 1.1.0 - 20170904</p>
+    <br class="cb" />
+  </span>
+  <h1 class="cb">ao.array2string</h1>
+  <p>
+    Converts a lua array of numbers into the byte-string that can be fed to
+    <a href="device_play.html">device:play</a>.<br/>
+    It also returns a second value, the <i>buf_size</i> number
+    that <a href="device_play.html">device:play</a> will need.
+  </p><p>
+    Currently it is restricted to the common case of 16-bit devices.
+  </p><p>
+    If there is more than one channel, for example two,
+    then the array should contain the channel samples
+    in the order<br/>
+    <code> &nbsp; { sample1_left, sample1_right, sample2_left, sample2_right, sample3_left . . . }</code>
+  </p>
+  <pre class="declare"><i>string</I> buf, <i>integer</i> buf_size = ao.array2string( { <i>numbers</I> samples }, <i>table</i> sampleFormat )</pre>
+  <p>
+  The <i>sampleFormat</i> table is optional,
+  and can contain the following fields:
+  <ul class="vars">
+    <li>bits<ul>
+      <li>
+        a number that defines the bits per sample.
+        The default is 16.<br>
+        It should be the same as the <i>bits</i>
+        <a href="sample_format.html">field</a>
+        in the device you want to play to.
+        <br/>In version 1.2 the <i>bits</i> field is not yet implemented.
+      </li>
+    </ul></li>
+    <li>byteFormat<ul>
+      <li>
+        a string that defines what byte ordering is used.
+        It can be either "little", "big" or "native".
+        The default is "litte".<br>
+        It should be the same as the <i>byteFormat</i>
+        <a href="sample_format.html">field</a>
+        in the device you want to play to.
+      </li>
+    </ul></li>
+    <li>numberType<ul>
+      <li>
+        a string that defines what type of number will be used to specify the
+        samples. It can be either:<br>
+        "float" (meaning between -1 and +1), which is the default,<br>
+        "signed" (meaning between -32768 and +32767) or<br>
+        "unsigned" (meaning between 0 and 65535).
+      </li>
+    </ul></li>
+  </ul>
+  </p>
+  <h2>Notes</h2>
+  <p>
+  <i>array2string</i>, introduced in 1.2.0, simplifies putting together
+  the string of sample data
+  that <a href="device_play.html">device:play</a> will need.
+  </p><pre>  local buffer = {}
+  for i = 0,format.rate do    -- one second
+    local sample = 0.75 * math.sin(2*math.pi*freq*i / format.rate)
+    buffer[2*i+1] = sample   -- left
+    buffer[2*i+2] = sample   -- right
+  end
+  device:play( ao.array2string(buffer) )</pre>
+  <p>
+  This replaces the not-very-elegant piece of lua code 
+  involving not-very-portable bit operations<br />
+  to put together an table of bytes
+  then <i>concat</i> the table into the byte-string,<br/>
+  and which also runs nearly four times slower than <i>array2string</i> :
+  <!--<br /> See <a href="../examples/ao_example.lua">ao_example.lua</a> -->
+  </p>
+  <pre>  local buf_size = format.bits/8 * format.channels * format.rate
+  local buffer = {}
+  for i = 0,format.rate do    -- one second
+    local sample = math.floor((0.75 * 32768
+      * math.sin(2 * math.pi * freq * i/format.rate)) + 0.5)
+    local lsb = bit.band(sample, 0xff)
+    local msb = bit.band(bit.rshift(sample, 8), 0xff)
+    buffer[4*i+1] = string.char(lsb)   --  left lsb
+    buffer[4*i+2] = string.char(msb)   --  left msb
+    buffer[4*i+3] = string.char(lsb)   -- right lsb
+    buffer[4*i+4] = string.char(msb)   -- right msb
+  end
+  local buf_str = table.concat(buffer)
+  device:play(buf_str, buf_size)</pre>
+
+  <hr />
+  <span class="tiny">
+    <p class="fl">developed by
+    <a href="https://github.com/thelinx">Linus Sj&ouml;gren</a>,
+    <a href="https://github.com/daurnimator">daurnimator</a> and
+    <a href="https://github.com/peterbillam">peterbillam</a>
+    </p>
+    <p class="fr"><a href="mailto:thelinx@unreliablepollution.net">thelinx@unreliablepollution.net</a></p>
+    <br class="cb" />
+    <p class="fl"><a href="./index.html">back to index</a></p>
+    <p class="fr"><a href="http://github.com/thelinx/lao">this project at GitHub</a></p>
+    <br class="cb" />
+  </span>
+</body>
+</html>
+

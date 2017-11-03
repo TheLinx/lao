@@ -6,6 +6,11 @@
 #include "lauxlib.h"
 #include "ao/ao.h"
 
+int my_round(double number)
+{
+	return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
+}
+
 /* -- Library Setup/Teardown -- */
 static int has_initialized = 0;
 static int l_initialize(lua_State* L)
@@ -358,20 +363,83 @@ static int l_append_global_option(lua_State *L)
 	return 1;
 }
 
+static int l_array2string(lua_State *L)
+{
+	/*  I would like to get bits from the device, but ...
+		ao_device is opaque https://xiph.org/ao/doc/ao_device.html
+		and I can't just remember it because there might be several
+		different open devices :-( SO: I accept an extra table arg
+	*/
+	luaL_checktype(L, 1, LUA_TTABLE);  /* an array of floats -1...+1 */
+	int buf_size = luaL_len(L, 1); /* PiL p.282 */
+	int bits = 16;
+	const char* byteFormat = "little";  /* "little", "big" or "native" */
+	const char* numberType = "float";   /* "float", "unsigned" or "signed" */
+	if (lua_type(L, 2) == LUA_TTABLE) {
+		lua_pushstring(L, "bits");
+		lua_gettable(L, 2);    /* PiL p. 164 */
+		if (lua_isnumber(L, -1)) { bits = lua_tointeger(L, -1); }
+		lua_pop(L, 1);
+		bits = bits + 1;  /* avoid unused-variable warning :-( */
+		lua_pushstring(L, "byteFormat"); /* if "native", use isBigEndian() */
+		lua_gettable(L, 2);    /* PiL p. 164 */
+		if (lua_isstring(L, -1)) { byteFormat = lua_tostring(L,-1); }
+		lua_pop(L, 1);
+		if (byteFormat[0] == 'n') {   /* native */
+			byteFormat = ao_is_big_endian() ? "big" : "little";
+		}
+		lua_pushstring(L, "numberType");
+		lua_gettable(L, 2);     /* PiL p. 164 */
+		if (lua_isstring(L, -1)) { numberType = lua_tostring(L,-1); }
+		lua_pop(L, 1);
+	}
+	luaL_Buffer buf_str;           /* PiL p.285 */
+	luaL_buffinit(L, &buf_str);    /* PiL p.286 */
+	int i;
+	signed sample_int;
+	for (i = 1; i <= buf_size; i += 1)
+	{
+		lua_rawgeti(L, 1, i);
+		if        (numberType[0] == 's') {     /* signed */
+			sample_int = lua_tonumber(L, -1);
+		} else if (numberType[0] == 'u') {   /* unsigned */
+			sample_int = lua_tonumber(L, -1) - 32768;  /* assumes 16 bits */
+		} else {                   /* float -1.0 .. +1.0 */
+			float sample_flt = lua_tonumber(L, -1);
+			sample_int = my_round(sample_flt * 32767); /* assumes 16 bits */
+		}
+		lua_pop(L,1);
+		if        (sample_int  >  32767) { sample_int =  32767;
+		} else if (sample_int  < -32767) { sample_int = -32767;
+		}
+		if (byteFormat[0]=='b') {
+			luaL_addchar(&buf_str, (char) (sample_int>>8 & 0xff)); /* msb */
+			luaL_addchar(&buf_str, (char)  sample_int    & 0xff);  /* lsb */
+		} else {
+			luaL_addchar(&buf_str, (char)  sample_int    & 0xff);  /* lsb */
+			luaL_addchar(&buf_str, (char) (sample_int>>8 & 0xff)); /* msb */
+		}
+	}
+	luaL_pushresult(&buf_str);    /* PiL p.286 */
+	lua_pushinteger(L, 2*buf_size);
+	return 2;
+}
+
 /* -- Lua Stuff -- */
 static const luaL_Reg ao [] = {
 	{"initialize", l_initialize},
-	{"setinitialized", l_setinitialized},
+	{"setinitialized",  l_setinitialized},
 	{"shutdown", l_shutdown},
 	{"openLive", l_open_live},
 	{"openFile", l_open_file},
 	{"driverId", l_driver_id},
 	{"defaultDriverId", l_default_driver_id},
-	{"driverInfo", l_driver_info},
-	{"driverInfoList", l_driver_info_list},
-	{"fileExtension", l_file_extension},
-	{"isBigEndian", l_is_big_endian},
+	{"driverInfo",      l_driver_info},
+	{"driverInfoList",  l_driver_info_list},
+	{"fileExtension" ,  l_file_extension},
+	{"isBigEndian",     l_is_big_endian},
 	{"appendGlobalOption", l_append_global_option},
+	{"array2string",    l_array2string},
 	{NULL, NULL}
 };
 
@@ -386,6 +454,8 @@ int luaopen_ao(lua_State* L)
 	lua_setfield(L, -2, "close");
 	lua_pushcfunction(L, l_play);
 	lua_setfield(L, -2, "play");
+	lua_pushcfunction(L, l_array2string);
+	lua_setfield(L, -2, "array2string");
 #if LUA_VERSION_NUM >= 502
 	luaL_newlib(L, ao);    /* 5.2 */
 #else
