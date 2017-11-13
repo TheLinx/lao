@@ -338,6 +338,7 @@ static int l_driver_info_list(lua_State *L)
 	return 1;
 }
 
+#ifdef HAVE_AO_FILE_EXTENSION
 static int l_file_extension(lua_State *L)
 {
 	int driverId = luaL_checkinteger(L, 1);
@@ -347,6 +348,7 @@ static int l_file_extension(lua_State *L)
 	lua_pushstring(L, ao_file_extension(driverId));
 	return 1;
 }
+#endif
 
 /* -- Miscellaneous -- */
 static int l_is_big_endian(lua_State *L)
@@ -436,7 +438,9 @@ static const luaL_Reg ao [] = {
 	{"defaultDriverId", l_default_driver_id},
 	{"driverInfo",      l_driver_info},
 	{"driverInfoList",  l_driver_info_list},
+#ifdef HAVE_AO_FILE_EXTENSION
 	{"fileExtension" ,  l_file_extension},
+#endif
 	{"isBigEndian",     l_is_big_endian},
 	{"appendGlobalOption", l_append_global_option},
 	{"array2string",    l_array2string},
